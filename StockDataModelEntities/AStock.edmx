@@ -48,11 +48,12 @@
           </Key>
           <Property Name="IndexID" Type="nvarchar" MaxLength="255" />
           <Property Name="TradingDate" Type="nvarchar" MaxLength="255" />
-          <Property Name="DayOfWeek" Type="float" />
           <Property Name="OpenIndex" Type="float" />
           <Property Name="HighIndex" Type="float" />
           <Property Name="LowIndex" Type="float" />
           <Property Name="CloseIndex" Type="float" />
+          <Property Name="ConstituentStockTradeVolume" Type="float" />
+          <Property Name="ConstituentStockTradeAmount" Type="float" />
           <Property Name="IndexReturnRate" Type="float" />
           <Property Name="UniqueID" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
@@ -542,7 +543,6 @@
             <End Role="TRD_Co_Quarter_ProfitIndex" EntitySet="TRD_Co_Quarter_ProfitIndex" />
           </AssociationSet>
           <EntitySet Name="STK_MKT_DeriativeTradingIndexDaily" EntityType="astockModel.STK_MKT_DeriativeTradingIndexDaily" />
-          <EntitySet Name="STK_MKT_IndexDaily" EntityType="astockModel.STK_MKT_IndexDaily" />
           <EntitySet Name="STK_MKT_RiskFactorDaily" EntityType="astockModel.STK_MKT_RiskFactorDaily" />
           <EntitySet Name="STK_MKT_ThreeFactorModelDaily" EntityType="astockModel.STK_MKT_ThreeFactorModelDaily" />
           <AssociationSet Name="FK_STK_MKT_Dalyr_TRD_Co1" Association="astockModel.FK_STK_MKT_Dalyr_TRD_Co1">
@@ -564,6 +564,7 @@
             <End Role="TRD_Co" EntitySet="TRD_Co" />
             <End Role="STK_MKT_PortfolioBase" EntitySet="STK_MKT_PortfolioBase" />
           </AssociationSet>
+          <EntitySet Name="STK_MKT_IndexDaily" EntityType="astockModel.STK_MKT_IndexDaily" />
         </EntityContainer>
         <EntityType Name="TRD_Co">
           <Key>
@@ -886,20 +887,6 @@
           <Property Name="Liquidility" Type="Double" />
           <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_STK_MKT_Dalyr_TRD_Co1" FromRole="STK_MKT_DeriativeTradingIndexDaily" ToRole="TRD_Co" />
         </EntityType>
-        <EntityType Name="STK_MKT_IndexDaily">
-          <Key>
-            <PropertyRef Name="UniqueID" />
-          </Key>
-          <Property Name="IndexID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="DayOfWeek" Type="Double" />
-          <Property Name="OpenIndex" Type="Double" />
-          <Property Name="HighIndex" Type="Double" />
-          <Property Name="LowIndex" Type="Double" />
-          <Property Name="CloseIndex" Type="Double" />
-          <Property Name="IndexReturnRate" Type="Double" />
-          <Property Name="UniqueID" Type="Guid" Nullable="false" />
-        </EntityType>
         <EntityType Name="STK_MKT_RiskFactorDaily">
           <Key>
             <PropertyRef Name="UniqueID" />
@@ -1045,6 +1032,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="STK_MKT_IndexDaily">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="IndexID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="OpenIndex" Type="Double" />
+          <Property Name="HighIndex" Type="Double" />
+          <Property Name="LowIndex" Type="Double" />
+          <Property Name="CloseIndex" Type="Double" />
+          <Property Name="ConstituentStockTradeVolume" Type="Double" />
+          <Property Name="ConstituentStockTradeAmount" Type="Double" />
+          <Property Name="IndexReturnRate" Type="Double" />
+          <Property Name="UniqueID" Type="Guid" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1317,21 +1319,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_IndexDaily">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_IndexDaily">
-              <MappingFragment StoreEntitySet="STK_MKT_IndexDaily">
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-                <ScalarProperty Name="IndexReturnRate" ColumnName="IndexReturnRate" />
-                <ScalarProperty Name="CloseIndex" ColumnName="CloseIndex" />
-                <ScalarProperty Name="LowIndex" ColumnName="LowIndex" />
-                <ScalarProperty Name="HighIndex" ColumnName="HighIndex" />
-                <ScalarProperty Name="OpenIndex" ColumnName="OpenIndex" />
-                <ScalarProperty Name="DayOfWeek" ColumnName="DayOfWeek" />
-                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
-                <ScalarProperty Name="IndexID" ColumnName="IndexID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="STK_MKT_RiskFactorDaily">
             <EntityTypeMapping TypeName="astockModel.STK_MKT_RiskFactorDaily">
               <MappingFragment StoreEntitySet="STK_MKT_RiskFactorDaily">
@@ -1428,6 +1415,22 @@
                 <ScalarProperty Name="ExcessiveReturn1" ColumnName="ExcessiveReturn1" />
                 <ScalarProperty Name="CreationTime" ColumnName="CreationTime" />
                 <ScalarProperty Name="StockId" ColumnName="StockId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STK_MKT_IndexDaily">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_IndexDaily">
+              <MappingFragment StoreEntitySet="STK_MKT_IndexDaily">
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+                <ScalarProperty Name="IndexReturnRate" ColumnName="IndexReturnRate" />
+                <ScalarProperty Name="ConstituentStockTradeAmount" ColumnName="ConstituentStockTradeAmount" />
+                <ScalarProperty Name="ConstituentStockTradeVolume" ColumnName="ConstituentStockTradeVolume" />
+                <ScalarProperty Name="CloseIndex" ColumnName="CloseIndex" />
+                <ScalarProperty Name="LowIndex" ColumnName="LowIndex" />
+                <ScalarProperty Name="HighIndex" ColumnName="HighIndex" />
+                <ScalarProperty Name="OpenIndex" ColumnName="OpenIndex" />
+                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
+                <ScalarProperty Name="IndexID" ColumnName="IndexID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

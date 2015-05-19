@@ -16,11 +16,12 @@ namespace StockDataModelEntities
     {
         public string IndexID { get; set; }
         public string TradingDate { get; set; }
-        public Nullable<double> DayOfWeek { get; set; }
         public Nullable<double> OpenIndex { get; set; }
         public Nullable<double> HighIndex { get; set; }
         public Nullable<double> LowIndex { get; set; }
         public Nullable<double> CloseIndex { get; set; }
+        public Nullable<double> ConstituentStockTradeVolume { get; set; }
+        public Nullable<double> ConstituentStockTradeAmount { get; set; }
         public Nullable<double> IndexReturnRate { get; set; }
         public System.Guid UniqueID { get; set; }
     }
