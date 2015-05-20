@@ -30,6 +30,7 @@ namespace apm
         private bool _isFilterByBoard = false;
         private bool _isFilterBySymbol = false;
         private List<string> _interestedSymbols;
+        private string _riskType = string.Empty;
         private static ILog _logger = LogManager.GetLogger("CAPM");
 
         private static Dictionary<int, List<int> > MarketTypeMap = new Dictionary<int, List<int> >()
@@ -604,9 +605,10 @@ namespace apm
             double circulateMarketValue = 0;
             double liquidity = 0;
             var count = 0;
+            var riskSampleCount = 0;
             
-            ArrayList residentialArray = new ArrayList();
-            ArrayList returnArray = new ArrayList();
+            List<double> residentialArray = new List<double>();
+            List<double> returnArray = new List<double>();
 
             foreach (var beta in timeConstrainedDailyBeta)
             {
@@ -700,26 +702,55 @@ namespace apm
                     throw new ApplicationException(string.Format("Unrecognized average algorithm {0}", _avAlgo));
             }
 
+            List<double> riskCalMatrix;
             if(excessive != 0)
             {
+                switch(_riskType.ToUpper())
+                {
+                    case "DOWNSIDE":
+                        riskCalMatrix = returnArray.Where(c => c < excessive).ToList();
+                        riskSampleCount = riskCalMatrix.Count;
+                        break;
+                    case "BOTHSIDE":
+                        riskCalMatrix = returnArray;
+                        riskSampleCount = count;
+                        break;
+                    default:
+                        throw new ApplicationException(string.Format("Unrecognized risk type : <{0}>", _riskType));
+                }
+
                 double deviation = 0;
-                foreach(double t in returnArray)
+                foreach(double t in riskCalMatrix)
                 {
                     deviation += Math.Pow((t - excessive), 2);
                 }
-                excessiveRisk = Math.Sqrt(deviation / (count - 1));
+                excessiveRisk = Math.Sqrt(deviation / (riskSampleCount - 1));
                 excessiveSharpe = excessive / excessiveRisk;
             }
 
             if(premium != 0)
             {
+                switch (_riskType.ToUpper())
+                {
+                    case "DOWNSIDE":
+                        riskCalMatrix = residentialArray.Where(c => c < premium).ToList();
+                        riskSampleCount = riskCalMatrix.Count;
+                        break;
+                    case "BOTHSIDE":
+                        riskCalMatrix = residentialArray;
+                        riskSampleCount = count;
+                        break;
+                    default:
+                        throw new ApplicationException(string.Format("Unrecognized risk type : <{0}>", _riskType));
+                }
+
                 double deviation = 0;
-                foreach(double r in residentialArray)
+                foreach(double r in riskCalMatrix)
                 {
                     deviation += Math.Pow((r - premium), 2);
                 }
 
-                residentialRisk = Math.Sqrt(deviation / (count - 1));
+                residentialRisk = Math.Sqrt(deviation / (riskSampleCount - 1));
 
                 residentialSharpe = premium / residentialRisk;
             }
@@ -768,6 +799,7 @@ namespace apm
             GetEndDate();
             GetAlgorithm();
             GetBoardType();
+            GetRiskType();
             GetReturnRateSource();
             GetPorfolioNumOfStocks();
             GetNumOfStocksKeptInPivot();
@@ -923,7 +955,25 @@ namespace apm
                 case "CONSOLIDATED":
                     break;
                 default:
-                    throw new ApplicationException(string.Format("Unrecognized board type : <{0}>", _source));
+                    throw new ApplicationException(string.Format("Unrecognized return rate source : <{0}>", _source));
+            }
+        }
+
+        private void GetRiskType()
+        {
+            _riskType = ConfigurationManager.AppSettings["RiskType"];
+            if (string.IsNullOrEmpty(_riskType))
+            {
+                throw new ApplicationException(string.Format("Configuration item 'RiskType' must be present and valid"));
+            }
+
+            switch (_riskType.ToUpper())
+            {
+                case "DOWNSIDE":
+                case "BOTHSIDE":
+                    break;
+                default:
+                    throw new ApplicationException(string.Format("Unrecognized risk type : <{0}>", _riskType));
             }
         }
 
@@ -1015,7 +1065,7 @@ namespace apm
                 case "ResidentialReturnOptimal": 
                     break;
                 default:
-                    throw new ApplicationException(string.Format("Unrecognized average algorithm : <{0}>", _pfAlgo));
+                    throw new ApplicationException(string.Format("Unrecognized portfolio determination algorithm : <{0}>", _pfAlgo));
             }
         }
     }
