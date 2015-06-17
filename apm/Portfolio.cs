@@ -29,7 +29,14 @@ namespace apm
         public double PriceEarningRate { get; set; }
         public double Turnover { get; set; }
         public double CirculatedMarketValue { get; set; }
-        public double Liquidity { get; set; } 
+        public double Liquidity { get; set; }
+        public double LatestLongTermROE { get; set; }
+        public double LatestClosePrice { get; set; }
+        public double AveragePriceInPastWeek { get; set; }
+        public double AveragePriceInPastMonth { get; set; }
+        public double AveragePriceInPastThreeMonth { get; set; }
+        public double AveragePriceInPastSixMonth { get; set; }
+        public double AveragePriceInPastYear { get; set; }
     }
 
     class StockIndex
@@ -64,5 +71,17 @@ namespace apm
         public double CirculatedMarketValue { get; set; }
 
         public double Liquidity { get; set; }
+
+        public double LatestClosePrice { get; set; }
+
+        public double AveragePricePastWeek { get; set; }
+
+        public double AveragePricePastMonth { get; set; }
+
+        public double AveragePricePastThreeMonth { get; set; }
+
+        public double AveragePricePastSixMonth { get; set; }
+
+        public double AveragePricePastYear { get; set; }
     }
 }

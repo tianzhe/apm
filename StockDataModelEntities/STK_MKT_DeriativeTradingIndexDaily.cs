@@ -29,6 +29,7 @@ namespace StockDataModelEntities
         public Nullable<double> ChangeRatio { get; set; }
         public Nullable<double> Amount { get; set; }
         public Nullable<double> Liquidility { get; set; }
+        public Nullable<System.DateTime> TradingDate2 { get; set; }
     
         public virtual TRD_Co TRD_Co { get; set; }
     }

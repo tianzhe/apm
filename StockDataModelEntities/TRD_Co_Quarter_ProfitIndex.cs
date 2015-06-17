@@ -86,7 +86,6 @@ namespace StockDataModelEntities
         public Nullable<double> ReturnOnTotalAssetAttrToCompanyTTM { get; set; }
         public Nullable<double> ROI { get; set; }
         public System.Guid UniqueID { get; set; }
-    
-        public virtual TRD_Co TRD_Co { get; set; }
+        public Nullable<System.DateTime> DateAsOfReporting2 { get; set; }
     }
 }

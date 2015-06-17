@@ -11,6 +11,7 @@
           </Key>
           <Property Name="MarketType" Type="float" />
           <Property Name="TradeDate" Type="nvarchar" MaxLength="255" />
+          <Property Name="TradeDate2" Type="datetime" />
           <Property Name="SharesExchangedAmount" Type="float" />
           <Property Name="TransactionValueAmount" Type="float" />
           <Property Name="AverageWeightReturnRateReinvest" Type="float" />
@@ -41,6 +42,7 @@
           <Property Name="ChangeRatio" Type="float" />
           <Property Name="Amount" Type="float" />
           <Property Name="Liquidility" Type="float" />
+          <Property Name="TradingDate2" Type="datetime" />
         </EntityType>
         <EntityType Name="STK_MKT_IndexDaily">
           <Key>
@@ -56,6 +58,7 @@
           <Property Name="ConstituentStockTradeAmount" Type="float" />
           <Property Name="IndexReturnRate" Type="float" />
           <Property Name="UniqueID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TradingDate2" Type="datetime" />
         </EntityType>
         <EntityType Name="STK_MKT_PortfolioBase">
           <Key>
@@ -96,6 +99,7 @@
           <Property Name="ARsq1" Type="float" />
           <Property Name="ARsq2" Type="float" />
           <Property Name="UniqueID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TradingDate2" Type="datetime" />
         </EntityType>
         <EntityType Name="STK_MKT_ThreeFactorModelDaily">
           <Key>
@@ -133,6 +137,7 @@
           <Property Name="LatestCapitalChangeDate" Type="nvarchar" MaxLength="255" />
           <Property Name="TradeStatus" Type="float" />
           <Property Name="UniqueID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TradeDate2" Type="datetime" />
         </EntityType>
         <EntityType Name="TRD_Co">
           <Key>
@@ -298,6 +303,7 @@
           <Property Name="ReturnOnTotalAssetAttrToCompanyTTM" Type="float" />
           <Property Name="ROI" Type="float" />
           <Property Name="UniqueID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DateAsOfReporting2" Type="datetime" />
         </EntityType>
         <EntityType Name="TRD_Co_Quarter_PSIndex">
           <Key>
@@ -374,18 +380,6 @@
           <Property Name="DegreeTotalLeverage" Type="float" />
           <Property Name="UniqueID" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
-        <Association Name="FK_STK_MKT_Dalyr_TRD_Co">
-          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="1" />
-          <End Role="STK_MKT_DeriativeTradingIndexDaily" Type="Self.STK_MKT_DeriativeTradingIndexDaily" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="STK_MKT_DeriativeTradingIndexDaily">
-              <PropertyRef Name="Symbol" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_STK_MKT_PortfolioBase_TRD_Co">
           <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
           <End Role="STK_MKT_PortfolioBase" Type="Self.STK_MKT_PortfolioBase" Multiplicity="*" />
@@ -398,7 +392,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_STK_MKT_Stkbtal_TRD_Co">
+        <Association Name="FK_STK_MKT_RiskFactorDaily_TRD_Co">
           <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
           <End Role="STK_MKT_RiskFactorDaily" Type="Self.STK_MKT_RiskFactorDaily" Multiplicity="*" />
           <ReferentialConstraint>
@@ -422,54 +416,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TRD_Co_Per_Share_Index_TRD_Co">
-          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
-          <End Role="TRD_Co_Quarter_PSIndex" Type="Self.TRD_Co_Quarter_PSIndex" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="TRD_Co_Quarter_PSIndex">
-              <PropertyRef Name="StockID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TRD_Co_Quarter_DevIndex_TRD_Co">
-          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
-          <End Role="TRD_Co_Quarter_DevIndex" Type="Self.TRD_Co_Quarter_DevIndex" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="TRD_Co_Quarter_DevIndex">
-              <PropertyRef Name="StockID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TRD_Co_Quarter_ProfitIndex_TRD_Co">
-          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
-          <End Role="TRD_Co_Quarter_ProfitIndex" Type="Self.TRD_Co_Quarter_ProfitIndex" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="TRD_Co_Quarter_ProfitIndex">
-              <PropertyRef Name="StockID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TRD_Co_Quarter_RiskIndex_TRD_Co">
-          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
-          <End Role="TRD_Co_Quarter_RiskIndex" Type="Self.TRD_Co_Quarter_RiskIndex" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="TRD_Co_Quarter_RiskIndex">
-              <PropertyRef Name="StockID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="astockModelStoreContainer">
           <EntitySet Name="STK_MKT_ConsolidatedReturn" EntityType="Self.STK_MKT_ConsolidatedReturn" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="STK_MKT_DeriativeTradingIndexDaily" EntityType="Self.STK_MKT_DeriativeTradingIndexDaily" Schema="dbo" store:Type="Tables" />
@@ -483,15 +429,11 @@
           <EntitySet Name="TRD_Co_Quarter_ProfitIndex" EntityType="Self.TRD_Co_Quarter_ProfitIndex" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TRD_Co_Quarter_PSIndex" EntityType="Self.TRD_Co_Quarter_PSIndex" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TRD_Co_Quarter_RiskIndex" EntityType="Self.TRD_Co_Quarter_RiskIndex" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_STK_MKT_Dalyr_TRD_Co" Association="Self.FK_STK_MKT_Dalyr_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="STK_MKT_DeriativeTradingIndexDaily" EntitySet="STK_MKT_DeriativeTradingIndexDaily" />
-          </AssociationSet>
           <AssociationSet Name="FK_STK_MKT_PortfolioBase_TRD_Co" Association="Self.FK_STK_MKT_PortfolioBase_TRD_Co">
             <End Role="TRD_Co" EntitySet="TRD_Co" />
             <End Role="STK_MKT_PortfolioBase" EntitySet="STK_MKT_PortfolioBase" />
           </AssociationSet>
-          <AssociationSet Name="FK_STK_MKT_Stkbtal_TRD_Co" Association="Self.FK_STK_MKT_Stkbtal_TRD_Co">
+          <AssociationSet Name="FK_STK_MKT_RiskFactorDaily_TRD_Co" Association="Self.FK_STK_MKT_RiskFactorDaily_TRD_Co">
             <End Role="TRD_Co" EntitySet="TRD_Co" />
             <End Role="STK_MKT_RiskFactorDaily" EntitySet="STK_MKT_RiskFactorDaily" />
           </AssociationSet>
@@ -499,79 +441,141 @@
             <End Role="TRD_Co" EntitySet="TRD_Co" />
             <End Role="STK_MKT_TradeDaily" EntitySet="STK_MKT_TradeDaily" />
           </AssociationSet>
-          <AssociationSet Name="FK_TRD_Co_Per_Share_Index_TRD_Co" Association="Self.FK_TRD_Co_Per_Share_Index_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_PSIndex" EntitySet="TRD_Co_Quarter_PSIndex" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TRD_Co_Quarter_DevIndex_TRD_Co" Association="Self.FK_TRD_Co_Quarter_DevIndex_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_DevIndex" EntitySet="TRD_Co_Quarter_DevIndex" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TRD_Co_Quarter_ProfitIndex_TRD_Co" Association="Self.FK_TRD_Co_Quarter_ProfitIndex_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_ProfitIndex" EntitySet="TRD_Co_Quarter_ProfitIndex" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TRD_Co_Quarter_RiskIndex_TRD_Co" Association="Self.FK_TRD_Co_Quarter_RiskIndex_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_RiskIndex" EntitySet="TRD_Co_Quarter_RiskIndex" />
-          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="astockModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityContainer Name="astockEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="TRD_Co" EntityType="astockModel.TRD_Co" />
-          <EntitySet Name="TRD_Co_Quarter_PSIndex" EntityType="astockModel.TRD_Co_Quarter_PSIndex" />
-          <AssociationSet Name="FK_TRD_Co_Per_Share_Index_TRD_Co1" Association="astockModel.FK_TRD_Co_Per_Share_Index_TRD_Co1">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_PSIndex" EntitySet="TRD_Co_Quarter_PSIndex" />
-          </AssociationSet>
-          <EntitySet Name="TRD_Co_Quarter_RiskIndex" EntityType="astockModel.TRD_Co_Quarter_RiskIndex" />
-          <AssociationSet Name="FK_TRD_Co_Quarter_RiskIndex_TRD_Co" Association="astockModel.FK_TRD_Co_Quarter_RiskIndex_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_RiskIndex" EntitySet="TRD_Co_Quarter_RiskIndex" />
-          </AssociationSet>
-          <EntitySet Name="TRD_Co_Quarter_DevIndex" EntityType="astockModel.TRD_Co_Quarter_DevIndex" />
-          <AssociationSet Name="FK_TRD_Co_Quarter_DevIndex_TRD_Co" Association="astockModel.FK_TRD_Co_Quarter_DevIndex_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_DevIndex" EntitySet="TRD_Co_Quarter_DevIndex" />
-          </AssociationSet>
-          <EntitySet Name="TRD_Co_Quarter_ProfitIndex" EntityType="astockModel.TRD_Co_Quarter_ProfitIndex" />
-          <AssociationSet Name="FK_TRD_Co_Quarter_ProfitIndex_TRD_Co" Association="astockModel.FK_TRD_Co_Quarter_ProfitIndex_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="TRD_Co_Quarter_ProfitIndex" EntitySet="TRD_Co_Quarter_ProfitIndex" />
-          </AssociationSet>
-          <EntitySet Name="STK_MKT_DeriativeTradingIndexDaily" EntityType="astockModel.STK_MKT_DeriativeTradingIndexDaily" />
-          <EntitySet Name="STK_MKT_RiskFactorDaily" EntityType="astockModel.STK_MKT_RiskFactorDaily" />
-          <EntitySet Name="STK_MKT_ThreeFactorModelDaily" EntityType="astockModel.STK_MKT_ThreeFactorModelDaily" />
-          <AssociationSet Name="FK_STK_MKT_Dalyr_TRD_Co1" Association="astockModel.FK_STK_MKT_Dalyr_TRD_Co1">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="STK_MKT_DeriativeTradingIndexDaily" EntitySet="STK_MKT_DeriativeTradingIndexDaily" />
-          </AssociationSet>
-          <AssociationSet Name="FK_STK_MKT_Stkbtal_TRD_Co1" Association="astockModel.FK_STK_MKT_Stkbtal_TRD_Co1">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="STK_MKT_RiskFactorDaily" EntitySet="STK_MKT_RiskFactorDaily" />
-          </AssociationSet>
-          <EntitySet Name="STK_MKT_ConsolidatedReturn" EntityType="astockModel.STK_MKT_ConsolidatedReturn" />
-          <EntitySet Name="STK_MKT_TradeDaily" EntityType="astockModel.STK_MKT_TradeDaily" />
-          <AssociationSet Name="FK_STK_MKT_TradeDaily_TRD_Co" Association="astockModel.FK_STK_MKT_TradeDaily_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="STK_MKT_TradeDaily" EntitySet="STK_MKT_TradeDaily" />
-          </AssociationSet>
-          <EntitySet Name="STK_MKT_PortfolioBase" EntityType="astockModel.STK_MKT_PortfolioBase" />
-          <AssociationSet Name="FK_STK_MKT_PortfolioBase_TRD_Co" Association="astockModel.FK_STK_MKT_PortfolioBase_TRD_Co">
-            <End Role="TRD_Co" EntitySet="TRD_Co" />
-            <End Role="STK_MKT_PortfolioBase" EntitySet="STK_MKT_PortfolioBase" />
-          </AssociationSet>
-          <EntitySet Name="STK_MKT_IndexDaily" EntityType="astockModel.STK_MKT_IndexDaily" />
-        </EntityContainer>
+        <EntityType Name="STK_MKT_ConsolidatedReturn">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="MarketType" Type="Double" />
+          <Property Name="TradeDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SharesExchangedAmount" Type="Double" />
+          <Property Name="TransactionValueAmount" Type="Double" />
+          <Property Name="AverageWeightReturnRateReinvest" Type="Double" />
+          <Property Name="AverageWeightReturnRateNonReinvest" Type="Double" />
+          <Property Name="CirculatedMarketCapitalWeightedReturnRateReinvest" Type="Double" />
+          <Property Name="CirculatedMarketCapitalWeightedReturnRateNonReinvest" Type="Double" />
+          <Property Name="TotalMarketCapitalWeightedReturnRateReinvest" Type="Double" />
+          <Property Name="TotalMarketCapitalWeightedReturnRateNonReinvest" Type="Double" />
+          <Property Name="NumOfCompaniesInCal" Type="Double" />
+          <Property Name="UniqueID" Type="Guid" Nullable="false" />
+          <Property Name="TradeDate2" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="STK_MKT_DeriativeTradingIndexDaily">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="UniqueID" Type="Guid" Nullable="false" />
+          <Property Name="SecurityID" Type="Double" Nullable="false" />
+          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Symbol" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ShortName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Ret" Type="Double" />
+          <Property Name="PE" Type="Double" />
+          <Property Name="PB" Type="Double" />
+          <Property Name="PCF" Type="Double" />
+          <Property Name="PS" Type="Double" />
+          <Property Name="Turnover" Type="Double" />
+          <Property Name="CirculatedMarketValue" Type="Double" />
+          <Property Name="ChangeRatio" Type="Double" />
+          <Property Name="Amount" Type="Double" />
+          <Property Name="Liquidility" Type="Double" />
+          <NavigationProperty Name="TRD_Co" Relationship="Self.FK_STK_MKT_DeriativeTradingIndexDaily_TRD_Co" FromRole="STK_MKT_DeriativeTradingIndexDaily" ToRole="TRD_Co" />
+          <Property Name="TradingDate2" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="STK_MKT_IndexDaily">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="IndexID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="OpenIndex" Type="Double" />
+          <Property Name="HighIndex" Type="Double" />
+          <Property Name="LowIndex" Type="Double" />
+          <Property Name="CloseIndex" Type="Double" />
+          <Property Name="ConstituentStockTradeVolume" Type="Double" />
+          <Property Name="ConstituentStockTradeAmount" Type="Double" />
+          <Property Name="IndexReturnRate" Type="Double" />
+          <Property Name="UniqueID" Type="Guid" Nullable="false" />
+          <Property Name="TradingDate2" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="STK_MKT_PortfolioBase">
+          <Key>
+            <PropertyRef Name="UniqueId" />
+          </Key>
+          <Property Name="StockId" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CreationTime" Type="DateTime" Precision="3" />
+          <Property Name="ExcessiveReturn1" Type="Double" />
+          <Property Name="ExcessiveReturn2" Type="Double" />
+          <Property Name="ResidentialReturn1" Type="Double" />
+          <Property Name="ResidentialReturn2" Type="Double" />
+          <Property Name="ExcessiveReturnRisk" Type="Double" />
+          <Property Name="ResidentialReturnRisk" Type="Double" />
+          <Property Name="ExcessiveReturnSharpeRatio" Type="Double" />
+          <Property Name="ResidentialReturnSharpeRatio" Type="Double" />
+          <Property Name="Determination" Type="Double" />
+          <Property Name="DeterminationAlgorithm" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AverageAlgorithm" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UniqueId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="TRD_Co" Relationship="Self.FK_STK_MKT_PortfolioBase_TRD_Co" FromRole="STK_MKT_PortfolioBase" ToRole="TRD_Co" />
+        </EntityType>
+        <EntityType Name="STK_MKT_RiskFactorDaily">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="SecurityID" Type="Double" />
+          <Property Name="Symbol" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Yield" Type="Double" />
+          <Property Name="Volatility" Type="Double" />
+          <Property Name="Beta1" Type="Double" />
+          <Property Name="Beta2" Type="Double" />
+          <Property Name="Cor1" Type="Double" />
+          <Property Name="Cor2" Type="Double" />
+          <Property Name="NonSysRisk1" Type="Double" />
+          <Property Name="NonSysRisk2" Type="Double" />
+          <Property Name="Rsq1" Type="Double" />
+          <Property Name="Rsq2" Type="Double" />
+          <Property Name="ARsq1" Type="Double" />
+          <Property Name="ARsq2" Type="Double" />
+          <Property Name="UniqueID" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="TRD_Co" Relationship="Self.FK_STK_MKT_RiskFactorDaily_TRD_Co" FromRole="STK_MKT_RiskFactorDaily" ToRole="TRD_Co" />
+          <Property Name="TradingDate2" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="STK_MKT_TradeDaily">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="StockID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TradeDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="OpenPrice" Type="Double" />
+          <Property Name="HighPrice" Type="Double" />
+          <Property Name="LowPrice" Type="Double" />
+          <Property Name="ClosePrice" Type="Double" />
+          <Property Name="SumStockTrade" Type="Double" />
+          <Property Name="SumVolumeTrade" Type="Double" />
+          <Property Name="SumCirculatedMarketValue" Type="Double" />
+          <Property Name="SumTotalMarketValue" Type="Double" />
+          <Property Name="ReturnRateReinvest" Type="Double" />
+          <Property Name="ReturnRateNonReinvest" Type="Double" />
+          <Property Name="ClosePriceComparableReinvest" Type="Double" />
+          <Property Name="ClosePriceComparableNonReinvest" Type="Double" />
+          <Property Name="MarketType" Type="Double" />
+          <Property Name="LatestCapitalChangeDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TradeStatus" Type="Double" />
+          <Property Name="UniqueID" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="TRD_Co" Relationship="Self.FK_STK_MKT_TradeDaily_TRD_Co" FromRole="STK_MKT_TradeDaily" ToRole="TRD_Co" />
+          <Property Name="TradeDate2" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="TRD_Co">
           <Key>
             <PropertyRef Name="StockId" />
           </Key>
           <Property Name="CoutryId" Type="Double" />
-          <Property Name="StockId" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="StockId" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="StockName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="CompanyNameCN" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="CompanyNameEN" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
@@ -598,116 +602,103 @@
           <Property Name="StatusChangeDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="HStockInterchangeCode" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="MarketType" Type="Double" />
-          <NavigationProperty Name="TRD_Co_Quarter_PSIndex" Relationship="astockModel.FK_TRD_Co_Per_Share_Index_TRD_Co1" FromRole="TRD_Co" ToRole="TRD_Co_Quarter_PSIndex" />
-          <NavigationProperty Name="TRD_Co_Quarter_RiskIndex" Relationship="astockModel.FK_TRD_Co_Quarter_RiskIndex_TRD_Co" FromRole="TRD_Co" ToRole="TRD_Co_Quarter_RiskIndex" />
-          <NavigationProperty Name="TRD_Co_Quarter_DevIndex" Relationship="astockModel.FK_TRD_Co_Quarter_DevIndex_TRD_Co" FromRole="TRD_Co" ToRole="TRD_Co_Quarter_DevIndex" />
-          <NavigationProperty Name="TRD_Co_Quarter_ProfitIndex" Relationship="astockModel.FK_TRD_Co_Quarter_ProfitIndex_TRD_Co" FromRole="TRD_Co" ToRole="TRD_Co_Quarter_ProfitIndex" />
-          <NavigationProperty Name="STK_MKT_DeriativeTradingIndexDaily" Relationship="astockModel.FK_STK_MKT_Dalyr_TRD_Co1" FromRole="TRD_Co" ToRole="STK_MKT_DeriativeTradingIndexDaily" />
-          <NavigationProperty Name="STK_MKT_RiskFactorDaily" Relationship="astockModel.FK_STK_MKT_Stkbtal_TRD_Co1" FromRole="TRD_Co" ToRole="STK_MKT_RiskFactorDaily" />
-          <NavigationProperty Name="STK_MKT_TradeDaily" Relationship="astockModel.FK_STK_MKT_TradeDaily_TRD_Co" FromRole="TRD_Co" ToRole="STK_MKT_TradeDaily" />
-          <NavigationProperty Name="STK_MKT_PortfolioBase" Relationship="astockModel.FK_STK_MKT_PortfolioBase_TRD_Co" FromRole="TRD_Co" ToRole="STK_MKT_PortfolioBase" />
+          <NavigationProperty Name="STK_MKT_DeriativeTradingIndexDaily" Relationship="Self.FK_STK_MKT_DeriativeTradingIndexDaily_TRD_Co" FromRole="TRD_Co" ToRole="STK_MKT_DeriativeTradingIndexDaily" />
+          <NavigationProperty Name="STK_MKT_PortfolioBase" Relationship="Self.FK_STK_MKT_PortfolioBase_TRD_Co" FromRole="TRD_Co" ToRole="STK_MKT_PortfolioBase" />
+          <NavigationProperty Name="STK_MKT_RiskFactorDaily" Relationship="Self.FK_STK_MKT_RiskFactorDaily_TRD_Co" FromRole="TRD_Co" ToRole="STK_MKT_RiskFactorDaily" />
+          <NavigationProperty Name="STK_MKT_TradeDaily" Relationship="Self.FK_STK_MKT_TradeDaily_TRD_Co" FromRole="TRD_Co" ToRole="STK_MKT_TradeDaily" />
         </EntityType>
-        <EntityType Name="TRD_Co_Quarter_PSIndex">
-          <Key>
-            <PropertyRef Name="UniqueID" />
-          </Key>
-          <Property Name="StockID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="DateAsOfReporting" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="ReportType" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="IndustryID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="EPS1" Type="Double" />
-          <Property Name="EPSTTM1" Type="Double" />
-          <Property Name="EPS2" Type="Double" />
-          <Property Name="EPSTTM2" Type="Double" />
-          <Property Name="EPS3" Type="Double" />
-          <Property Name="EPSTTM3" Type="Double" />
-          <Property Name="EPS4" Type="Double" />
-          <Property Name="EPSTTM4" Type="Double" />
-          <Property Name="ConsolidatedEPS1" Type="Double" />
-          <Property Name="ConsolidatedEPSTTM1" Type="Double" />
-          <Property Name="ConsolidatedEPS2" Type="Double" />
-          <Property Name="ConsolidatedEPSTTM2" Type="Double" />
-          <Property Name="EPSAttrToCompany" Type="Double" />
-          <Property Name="EPSTTMAttrToCompany" Type="Double" />
-          <Property Name="ConsolidatedEPSAttrToCompany" Type="Double" />
-          <Property Name="ConsolidatedEPSTTMAttrToCompany" Type="Double" />
-          <Property Name="OpTotalRevenuePerShare" Type="Double" />
-          <Property Name="OpTotalRevenueTTMPerShare" Type="Double" />
-          <Property Name="OpRevenuePerShare" Type="Double" />
-          <Property Name="OpRevenueTTMPerShare" Type="Double" />
-          <Property Name="EPSBIT" Type="Double" />
-          <Property Name="EPSTTMBIT" Type="Double" />
-          <Property Name="EPSBITDA" Type="Double" />
-          <Property Name="EPSTTMBITDA" Type="Double" />
-          <Property Name="OpProfitPerShare" Type="Double" />
-          <Property Name="OpProfitTTMPerShare" Type="Double" />
-          <Property Name="BookValuePS" Type="Double" />
-          <Property Name="NetTangibleAssetPS" Type="Double" />
-          <Property Name="DebtPS" Type="Double" />
-          <Property Name="AccumulatedCapitalPS" Type="Double" />
-          <Property Name="AccumulatedEPS" Type="Double" />
-          <Property Name="RetainedProfitPS" Type="Double" />
-          <Property Name="RetainedEPS" Type="Double" />
-          <Property Name="BVPSAttrToCompany" Type="Double" />
-          <Property Name="NetOACashFlowPS" Type="Double" />
-          <Property Name="NetOACashFlowTTMPS" Type="Double" />
-          <Property Name="NetIACashFlowPS" Type="Double" />
-          <Property Name="NetIACashFlowTTMPS" Type="Double" />
-          <Property Name="NetFACashFlowPS" Type="Double" />
-          <Property Name="NetFACashFlowTTMPS" Type="Double" />
-          <Property Name="CorpFreeCashFlowPS" Type="Double" />
-          <Property Name="CorpFreeCashFlowTTMPS" Type="Double" />
-          <Property Name="StakeHolderFreeCashFlowPS" Type="Double" />
-          <Property Name="StakeHolderFreeCashFlowTTMPS" Type="Double" />
-          <Property Name="DAPS" Type="Double" />
-          <Property Name="DATTMPS" Type="Double" />
-          <Property Name="OrigCorpFreeCashFlowPS" Type="Double" />
-          <Property Name="OrigEquityFreeCashFlowPS" Type="Double" />
-          <Property Name="NetCashFlowPS1" Type="Double" />
-          <Property Name="NetCashFlowTTMPS1" Type="Double" />
-          <Property Name="NetCashFlowPS2" Type="Double" />
-          <Property Name="NetCashFlowTTMPS2" Type="Double" />
-          <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_TRD_Co_Per_Share_Index_TRD_Co1" FromRole="TRD_Co_Quarter_PSIndex" ToRole="TRD_Co" />
-        </EntityType>
-        <Association Name="FK_TRD_Co_Per_Share_Index_TRD_Co1">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="0..1" />
-          <End Type="astockModel.TRD_Co_Quarter_PSIndex" Role="TRD_Co_Quarter_PSIndex" Multiplicity="*" />
+        <Association Name="FK_STK_MKT_DeriativeTradingIndexDaily_TRD_Co">
+          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="1" />
+          <End Role="STK_MKT_DeriativeTradingIndexDaily" Type="Self.STK_MKT_DeriativeTradingIndexDaily" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="TRD_Co">
               <PropertyRef Name="StockId" />
             </Principal>
-            <Dependent Role="TRD_Co_Quarter_PSIndex">
-              <PropertyRef Name="StockID" />
+            <Dependent Role="STK_MKT_DeriativeTradingIndexDaily">
+              <PropertyRef Name="Symbol" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="TRD_Co_Quarter_RiskIndex">
-          <Key>
-            <PropertyRef Name="UniqueID" />
-          </Key>
-          <Property Name="StockID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="DateAsOfReporting" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TypeOfReport" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="IndustryID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="DegreeFinanceLeverage" Type="Double" />
-          <Property Name="DegreeOperatingLeverage" Type="Double" />
-          <Property Name="DegreeTotalLeverage" Type="Double" />
-          <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_TRD_Co_Quarter_RiskIndex_TRD_Co" FromRole="TRD_Co_Quarter_RiskIndex" ToRole="TRD_Co" />
-        </EntityType>
-        <Association Name="FK_TRD_Co_Quarter_RiskIndex_TRD_Co">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="0..1" />
-          <End Type="astockModel.TRD_Co_Quarter_RiskIndex" Role="TRD_Co_Quarter_RiskIndex" Multiplicity="*" />
+        <Association Name="FK_STK_MKT_PortfolioBase_TRD_Co">
+          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
+          <End Role="STK_MKT_PortfolioBase" Type="Self.STK_MKT_PortfolioBase" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="TRD_Co">
               <PropertyRef Name="StockId" />
             </Principal>
-            <Dependent Role="TRD_Co_Quarter_RiskIndex">
+            <Dependent Role="STK_MKT_PortfolioBase">
+              <PropertyRef Name="StockId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_STK_MKT_RiskFactorDaily_TRD_Co">
+          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
+          <End Role="STK_MKT_RiskFactorDaily" Type="Self.STK_MKT_RiskFactorDaily" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TRD_Co">
+              <PropertyRef Name="StockId" />
+            </Principal>
+            <Dependent Role="STK_MKT_RiskFactorDaily">
+              <PropertyRef Name="Symbol" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_STK_MKT_TradeDaily_TRD_Co">
+          <End Role="TRD_Co" Type="Self.TRD_Co" Multiplicity="0..1" />
+          <End Role="STK_MKT_TradeDaily" Type="Self.STK_MKT_TradeDaily" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TRD_Co">
+              <PropertyRef Name="StockId" />
+            </Principal>
+            <Dependent Role="STK_MKT_TradeDaily">
               <PropertyRef Name="StockID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityContainer Name="astockEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="STK_MKT_ConsolidatedReturn" EntityType="Self.STK_MKT_ConsolidatedReturn" />
+          <EntitySet Name="STK_MKT_DeriativeTradingIndexDaily" EntityType="Self.STK_MKT_DeriativeTradingIndexDaily" />
+          <EntitySet Name="STK_MKT_IndexDaily" EntityType="Self.STK_MKT_IndexDaily" />
+          <EntitySet Name="STK_MKT_PortfolioBase" EntityType="Self.STK_MKT_PortfolioBase" />
+          <EntitySet Name="STK_MKT_RiskFactorDaily" EntityType="Self.STK_MKT_RiskFactorDaily" />
+          <EntitySet Name="STK_MKT_TradeDaily" EntityType="Self.STK_MKT_TradeDaily" />
+          <EntitySet Name="TRD_Co" EntityType="Self.TRD_Co" />
+          <AssociationSet Name="FK_STK_MKT_DeriativeTradingIndexDaily_TRD_Co" Association="Self.FK_STK_MKT_DeriativeTradingIndexDaily_TRD_Co">
+            <End Role="TRD_Co" EntitySet="TRD_Co" />
+            <End Role="STK_MKT_DeriativeTradingIndexDaily" EntitySet="STK_MKT_DeriativeTradingIndexDaily" />
+          </AssociationSet>
+          <AssociationSet Name="FK_STK_MKT_PortfolioBase_TRD_Co" Association="Self.FK_STK_MKT_PortfolioBase_TRD_Co">
+            <End Role="TRD_Co" EntitySet="TRD_Co" />
+            <End Role="STK_MKT_PortfolioBase" EntitySet="STK_MKT_PortfolioBase" />
+          </AssociationSet>
+          <AssociationSet Name="FK_STK_MKT_RiskFactorDaily_TRD_Co" Association="Self.FK_STK_MKT_RiskFactorDaily_TRD_Co">
+            <End Role="TRD_Co" EntitySet="TRD_Co" />
+            <End Role="STK_MKT_RiskFactorDaily" EntitySet="STK_MKT_RiskFactorDaily" />
+          </AssociationSet>
+          <AssociationSet Name="FK_STK_MKT_TradeDaily_TRD_Co" Association="Self.FK_STK_MKT_TradeDaily_TRD_Co">
+            <End Role="TRD_Co" EntitySet="TRD_Co" />
+            <End Role="STK_MKT_TradeDaily" EntitySet="STK_MKT_TradeDaily" />
+          </AssociationSet>
+          <EntitySet Name="STK_MKT_ThreeFactorModelDaily" EntityType="astockModel.STK_MKT_ThreeFactorModelDaily" />
+          <EntitySet Name="TRD_Co_Quarter_DevIndex" EntityType="astockModel.TRD_Co_Quarter_DevIndex" />
+          <EntitySet Name="TRD_Co_Quarter_ProfitIndex" EntityType="astockModel.TRD_Co_Quarter_ProfitIndex" />
+          <EntitySet Name="TRD_Co_Quarter_PSIndex" EntityType="astockModel.TRD_Co_Quarter_PSIndex" />
+          <EntitySet Name="TRD_Co_Quarter_RiskIndex" EntityType="astockModel.TRD_Co_Quarter_RiskIndex" />
+        </EntityContainer>
+        <EntityType Name="STK_MKT_ThreeFactorModelDaily">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="UniqueID" Type="Guid" Nullable="false" />
+          <Property Name="MarkettypeID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="RiskPremium1" Type="Double" />
+          <Property Name="RiskPremium2" Type="Double" />
+          <Property Name="SMB1" Type="Double" />
+          <Property Name="SMB2" Type="Double" />
+          <Property Name="HML1" Type="Double" />
+          <Property Name="HML2" Type="Double" />
+        </EntityType>
         <EntityType Name="TRD_Co_Quarter_DevIndex">
           <Key>
             <PropertyRef Name="UniqueID" />
@@ -762,20 +753,7 @@
           <Property Name="GrowthRateNetAssetValuePSA" Type="Double" />
           <Property Name="GrowthRateNetAssetValuePSB" Type="Double" />
           <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_TRD_Co_Quarter_DevIndex_TRD_Co" FromRole="TRD_Co_Quarter_DevIndex" ToRole="TRD_Co" />
         </EntityType>
-        <Association Name="FK_TRD_Co_Quarter_DevIndex_TRD_Co">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="0..1" />
-          <End Type="astockModel.TRD_Co_Quarter_DevIndex" Role="TRD_Co_Quarter_DevIndex" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="TRD_Co_Quarter_DevIndex">
-              <PropertyRef Name="StockID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="TRD_Co_Quarter_ProfitIndex">
           <Key>
             <PropertyRef Name="UniqueID" />
@@ -852,199 +830,81 @@
           <Property Name="ReturnOnTotalAssetAttrToCompanyTTM" Type="Double" />
           <Property Name="ROI" Type="Double" />
           <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_TRD_Co_Quarter_ProfitIndex_TRD_Co" FromRole="TRD_Co_Quarter_ProfitIndex" ToRole="TRD_Co" />
+          <Property Name="DateAsOfReporting2" Type="DateTime" Precision="3" />
         </EntityType>
-        <Association Name="FK_TRD_Co_Quarter_ProfitIndex_TRD_Co">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="0..1" />
-          <End Type="astockModel.TRD_Co_Quarter_ProfitIndex" Role="TRD_Co_Quarter_ProfitIndex" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="TRD_Co_Quarter_ProfitIndex">
-              <PropertyRef Name="StockID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="STK_MKT_DeriativeTradingIndexDaily">
-          <Key>
-            <PropertyRef Name="UniqueID" />
-          </Key>
-          <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <Property Name="SecurityID" Type="Double" Nullable="false" />
-          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Symbol" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="ShortName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Ret" Type="Double" />
-          <Property Name="PE" Type="Double" />
-          <Property Name="PB" Type="Double" />
-          <Property Name="PCF" Type="Double" />
-          <Property Name="PS" Type="Double" />
-          <Property Name="Turnover" Type="Double" />
-          <Property Name="CirculatedMarketValue" Type="Double" />
-          <Property Name="ChangeRatio" Type="Double" />
-          <Property Name="Amount" Type="Double" />
-          <Property Name="Liquidility" Type="Double" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_STK_MKT_Dalyr_TRD_Co1" FromRole="STK_MKT_DeriativeTradingIndexDaily" ToRole="TRD_Co" />
-        </EntityType>
-        <EntityType Name="STK_MKT_RiskFactorDaily">
-          <Key>
-            <PropertyRef Name="UniqueID" />
-          </Key>
-          <Property Name="SecurityID" Type="Double" />
-          <Property Name="Symbol" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Yield" Type="Double" />
-          <Property Name="Volatility" Type="Double" />
-          <Property Name="Beta1" Type="Double" />
-          <Property Name="Beta2" Type="Double" />
-          <Property Name="Cor1" Type="Double" />
-          <Property Name="Cor2" Type="Double" />
-          <Property Name="NonSysRisk1" Type="Double" />
-          <Property Name="NonSysRisk2" Type="Double" />
-          <Property Name="Rsq1" Type="Double" />
-          <Property Name="Rsq2" Type="Double" />
-          <Property Name="ARsq1" Type="Double" />
-          <Property Name="ARsq2" Type="Double" />
-          <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_STK_MKT_Stkbtal_TRD_Co1" FromRole="STK_MKT_RiskFactorDaily" ToRole="TRD_Co" />
-        </EntityType>
-        <EntityType Name="STK_MKT_ThreeFactorModelDaily">
-          <Key>
-            <PropertyRef Name="UniqueID" />
-          </Key>
-          <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <Property Name="MarkettypeID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="RiskPremium1" Type="Double" />
-          <Property Name="RiskPremium2" Type="Double" />
-          <Property Name="SMB1" Type="Double" />
-          <Property Name="SMB2" Type="Double" />
-          <Property Name="HML1" Type="Double" />
-          <Property Name="HML2" Type="Double" />
-        </EntityType>
-        <Association Name="FK_STK_MKT_Dalyr_TRD_Co1">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="1" />
-          <End Type="astockModel.STK_MKT_DeriativeTradingIndexDaily" Role="STK_MKT_DeriativeTradingIndexDaily" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="STK_MKT_DeriativeTradingIndexDaily">
-              <PropertyRef Name="Symbol" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_STK_MKT_Stkbtal_TRD_Co1">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="0..1" />
-          <End Type="astockModel.STK_MKT_RiskFactorDaily" Role="STK_MKT_RiskFactorDaily" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="STK_MKT_RiskFactorDaily">
-              <PropertyRef Name="Symbol" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="STK_MKT_ConsolidatedReturn">
-          <Key>
-            <PropertyRef Name="UniqueID" />
-          </Key>
-          <Property Name="MarketType" Type="Double" />
-          <Property Name="TradeDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="SharesExchangedAmount" Type="Double" />
-          <Property Name="TransactionValueAmount" Type="Double" />
-          <Property Name="AverageWeightReturnRateReinvest" Type="Double" />
-          <Property Name="AverageWeightReturnRateNonReinvest" Type="Double" />
-          <Property Name="CirculatedMarketCapitalWeightedReturnRateReinvest" Type="Double" />
-          <Property Name="CirculatedMarketCapitalWeightedReturnRateNonReinvest" Type="Double" />
-          <Property Name="TotalMarketCapitalWeightedReturnRateReinvest" Type="Double" />
-          <Property Name="TotalMarketCapitalWeightedReturnRateNonReinvest" Type="Double" />
-          <Property Name="NumOfCompaniesInCal" Type="Double" />
-          <Property Name="UniqueID" Type="Guid" Nullable="false" />
-        </EntityType>
-        <EntityType Name="STK_MKT_TradeDaily">
+        <EntityType Name="TRD_Co_Quarter_PSIndex">
           <Key>
             <PropertyRef Name="UniqueID" />
           </Key>
           <Property Name="StockID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TradeDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="OpenPrice" Type="Double" />
-          <Property Name="HighPrice" Type="Double" />
-          <Property Name="LowPrice" Type="Double" />
-          <Property Name="ClosePrice" Type="Double" />
-          <Property Name="SumStockTrade" Type="Double" />
-          <Property Name="SumVolumeTrade" Type="Double" />
-          <Property Name="SumCirculatedMarketValue" Type="Double" />
-          <Property Name="SumTotalMarketValue" Type="Double" />
-          <Property Name="ReturnRateReinvest" Type="Double" />
-          <Property Name="ReturnRateNonReinvest" Type="Double" />
-          <Property Name="ClosePriceComparableReinvest" Type="Double" />
-          <Property Name="ClosePriceComparableNonReinvest" Type="Double" />
-          <Property Name="MarketType" Type="Double" />
-          <Property Name="LatestCapitalChangeDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TradeStatus" Type="Double" />
+          <Property Name="DateAsOfReporting" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ReportType" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IndustryID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="EPS1" Type="Double" />
+          <Property Name="EPSTTM1" Type="Double" />
+          <Property Name="EPS2" Type="Double" />
+          <Property Name="EPSTTM2" Type="Double" />
+          <Property Name="EPS3" Type="Double" />
+          <Property Name="EPSTTM3" Type="Double" />
+          <Property Name="EPS4" Type="Double" />
+          <Property Name="EPSTTM4" Type="Double" />
+          <Property Name="ConsolidatedEPS1" Type="Double" />
+          <Property Name="ConsolidatedEPSTTM1" Type="Double" />
+          <Property Name="ConsolidatedEPS2" Type="Double" />
+          <Property Name="ConsolidatedEPSTTM2" Type="Double" />
+          <Property Name="EPSAttrToCompany" Type="Double" />
+          <Property Name="EPSTTMAttrToCompany" Type="Double" />
+          <Property Name="ConsolidatedEPSAttrToCompany" Type="Double" />
+          <Property Name="ConsolidatedEPSTTMAttrToCompany" Type="Double" />
+          <Property Name="OpTotalRevenuePerShare" Type="Double" />
+          <Property Name="OpTotalRevenueTTMPerShare" Type="Double" />
+          <Property Name="OpRevenuePerShare" Type="Double" />
+          <Property Name="OpRevenueTTMPerShare" Type="Double" />
+          <Property Name="EPSBIT" Type="Double" />
+          <Property Name="EPSTTMBIT" Type="Double" />
+          <Property Name="EPSBITDA" Type="Double" />
+          <Property Name="EPSTTMBITDA" Type="Double" />
+          <Property Name="OpProfitPerShare" Type="Double" />
+          <Property Name="OpProfitTTMPerShare" Type="Double" />
+          <Property Name="BookValuePS" Type="Double" />
+          <Property Name="NetTangibleAssetPS" Type="Double" />
+          <Property Name="DebtPS" Type="Double" />
+          <Property Name="AccumulatedCapitalPS" Type="Double" />
+          <Property Name="AccumulatedEPS" Type="Double" />
+          <Property Name="RetainedProfitPS" Type="Double" />
+          <Property Name="RetainedEPS" Type="Double" />
+          <Property Name="BVPSAttrToCompany" Type="Double" />
+          <Property Name="NetOACashFlowPS" Type="Double" />
+          <Property Name="NetOACashFlowTTMPS" Type="Double" />
+          <Property Name="NetIACashFlowPS" Type="Double" />
+          <Property Name="NetIACashFlowTTMPS" Type="Double" />
+          <Property Name="NetFACashFlowPS" Type="Double" />
+          <Property Name="NetFACashFlowTTMPS" Type="Double" />
+          <Property Name="CorpFreeCashFlowPS" Type="Double" />
+          <Property Name="CorpFreeCashFlowTTMPS" Type="Double" />
+          <Property Name="StakeHolderFreeCashFlowPS" Type="Double" />
+          <Property Name="StakeHolderFreeCashFlowTTMPS" Type="Double" />
+          <Property Name="DAPS" Type="Double" />
+          <Property Name="DATTMPS" Type="Double" />
+          <Property Name="OrigCorpFreeCashFlowPS" Type="Double" />
+          <Property Name="OrigEquityFreeCashFlowPS" Type="Double" />
+          <Property Name="NetCashFlowPS1" Type="Double" />
+          <Property Name="NetCashFlowTTMPS1" Type="Double" />
+          <Property Name="NetCashFlowPS2" Type="Double" />
+          <Property Name="NetCashFlowTTMPS2" Type="Double" />
           <Property Name="UniqueID" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_STK_MKT_TradeDaily_TRD_Co" FromRole="STK_MKT_TradeDaily" ToRole="TRD_Co" />
         </EntityType>
-        <Association Name="FK_STK_MKT_TradeDaily_TRD_Co">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="0..1" />
-          <End Type="astockModel.STK_MKT_TradeDaily" Role="STK_MKT_TradeDaily" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="STK_MKT_TradeDaily">
-              <PropertyRef Name="StockID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="STK_MKT_PortfolioBase">
-          <Key>
-            <PropertyRef Name="UniqueId" />
-          </Key>
-          <Property Name="StockId" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="CreationTime" Type="DateTime" Precision="3" />
-          <Property Name="ExcessiveReturn1" Type="Double" />
-          <Property Name="ExcessiveReturn2" Type="Double" />
-          <Property Name="ResidentialReturn1" Type="Double" />
-          <Property Name="ResidentialReturn2" Type="Double" />
-          <Property Name="ExcessiveReturnRisk" Type="Double" />
-          <Property Name="ResidentialReturnRisk" Type="Double" />
-          <Property Name="ExcessiveReturnSharpeRatio" Type="Double" />
-          <Property Name="ResidentialReturnSharpeRatio" Type="Double" />
-          <Property Name="Determination" Type="Double" />
-          <Property Name="DeterminationAlgorithm" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="AverageAlgorithm" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="UniqueId" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="TRD_Co" Relationship="astockModel.FK_STK_MKT_PortfolioBase_TRD_Co" FromRole="STK_MKT_PortfolioBase" ToRole="TRD_Co" />
-        </EntityType>
-        <Association Name="FK_STK_MKT_PortfolioBase_TRD_Co">
-          <End Type="astockModel.TRD_Co" Role="TRD_Co" Multiplicity="0..1" />
-          <End Type="astockModel.STK_MKT_PortfolioBase" Role="STK_MKT_PortfolioBase" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TRD_Co">
-              <PropertyRef Name="StockId" />
-            </Principal>
-            <Dependent Role="STK_MKT_PortfolioBase">
-              <PropertyRef Name="StockId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="STK_MKT_IndexDaily">
+        <EntityType Name="TRD_Co_Quarter_RiskIndex">
           <Key>
             <PropertyRef Name="UniqueID" />
           </Key>
-          <Property Name="IndexID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="TradingDate" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="OpenIndex" Type="Double" />
-          <Property Name="HighIndex" Type="Double" />
-          <Property Name="LowIndex" Type="Double" />
-          <Property Name="CloseIndex" Type="Double" />
-          <Property Name="ConstituentStockTradeVolume" Type="Double" />
-          <Property Name="ConstituentStockTradeAmount" Type="Double" />
-          <Property Name="IndexReturnRate" Type="Double" />
+          <Property Name="StockID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="DateAsOfReporting" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TypeOfReport" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="IndustryID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="DegreeFinanceLeverage" Type="Double" />
+          <Property Name="DegreeOperatingLeverage" Type="Double" />
+          <Property Name="DegreeTotalLeverage" Type="Double" />
           <Property Name="UniqueID" Type="Guid" Nullable="false" />
         </EntityType>
       </Schema>
@@ -1053,37 +913,313 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="astockModelStoreContainer" CdmEntityContainer="astockEntities">
+          <EntitySetMapping Name="STK_MKT_ConsolidatedReturn">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_ConsolidatedReturn">
+              <MappingFragment StoreEntitySet="STK_MKT_ConsolidatedReturn">
+                <ScalarProperty Name="TradeDate2" ColumnName="TradeDate2" />
+                <ScalarProperty Name="MarketType" ColumnName="MarketType" />
+                <ScalarProperty Name="TradeDate" ColumnName="TradeDate" />
+                <ScalarProperty Name="SharesExchangedAmount" ColumnName="SharesExchangedAmount" />
+                <ScalarProperty Name="TransactionValueAmount" ColumnName="TransactionValueAmount" />
+                <ScalarProperty Name="AverageWeightReturnRateReinvest" ColumnName="AverageWeightReturnRateReinvest" />
+                <ScalarProperty Name="AverageWeightReturnRateNonReinvest" ColumnName="AverageWeightReturnRateNonReinvest" />
+                <ScalarProperty Name="CirculatedMarketCapitalWeightedReturnRateReinvest" ColumnName="CirculatedMarketCapitalWeightedReturnRateReinvest" />
+                <ScalarProperty Name="CirculatedMarketCapitalWeightedReturnRateNonReinvest" ColumnName="CirculatedMarketCapitalWeightedReturnRateNonReinvest" />
+                <ScalarProperty Name="TotalMarketCapitalWeightedReturnRateReinvest" ColumnName="TotalMarketCapitalWeightedReturnRateReinvest" />
+                <ScalarProperty Name="TotalMarketCapitalWeightedReturnRateNonReinvest" ColumnName="TotalMarketCapitalWeightedReturnRateNonReinvest" />
+                <ScalarProperty Name="NumOfCompaniesInCal" ColumnName="NumOfCompaniesInCal" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STK_MKT_DeriativeTradingIndexDaily">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_DeriativeTradingIndexDaily">
+              <MappingFragment StoreEntitySet="STK_MKT_DeriativeTradingIndexDaily">
+                <ScalarProperty Name="TradingDate2" ColumnName="TradingDate2" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+                <ScalarProperty Name="SecurityID" ColumnName="SecurityID" />
+                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="Ret" ColumnName="Ret" />
+                <ScalarProperty Name="PE" ColumnName="PE" />
+                <ScalarProperty Name="PB" ColumnName="PB" />
+                <ScalarProperty Name="PCF" ColumnName="PCF" />
+                <ScalarProperty Name="PS" ColumnName="PS" />
+                <ScalarProperty Name="Turnover" ColumnName="Turnover" />
+                <ScalarProperty Name="CirculatedMarketValue" ColumnName="CirculatedMarketValue" />
+                <ScalarProperty Name="ChangeRatio" ColumnName="ChangeRatio" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Liquidility" ColumnName="Liquidility" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STK_MKT_IndexDaily">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_IndexDaily">
+              <MappingFragment StoreEntitySet="STK_MKT_IndexDaily">
+                <ScalarProperty Name="TradingDate2" ColumnName="TradingDate2" />
+                <ScalarProperty Name="IndexID" ColumnName="IndexID" />
+                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
+                <ScalarProperty Name="OpenIndex" ColumnName="OpenIndex" />
+                <ScalarProperty Name="HighIndex" ColumnName="HighIndex" />
+                <ScalarProperty Name="LowIndex" ColumnName="LowIndex" />
+                <ScalarProperty Name="CloseIndex" ColumnName="CloseIndex" />
+                <ScalarProperty Name="ConstituentStockTradeVolume" ColumnName="ConstituentStockTradeVolume" />
+                <ScalarProperty Name="ConstituentStockTradeAmount" ColumnName="ConstituentStockTradeAmount" />
+                <ScalarProperty Name="IndexReturnRate" ColumnName="IndexReturnRate" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STK_MKT_PortfolioBase">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_PortfolioBase">
+              <MappingFragment StoreEntitySet="STK_MKT_PortfolioBase">
+                <ScalarProperty Name="StockId" ColumnName="StockId" />
+                <ScalarProperty Name="CreationTime" ColumnName="CreationTime" />
+                <ScalarProperty Name="ExcessiveReturn1" ColumnName="ExcessiveReturn1" />
+                <ScalarProperty Name="ExcessiveReturn2" ColumnName="ExcessiveReturn2" />
+                <ScalarProperty Name="ResidentialReturn1" ColumnName="ResidentialReturn1" />
+                <ScalarProperty Name="ResidentialReturn2" ColumnName="ResidentialReturn2" />
+                <ScalarProperty Name="ExcessiveReturnRisk" ColumnName="ExcessiveReturnRisk" />
+                <ScalarProperty Name="ResidentialReturnRisk" ColumnName="ResidentialReturnRisk" />
+                <ScalarProperty Name="ExcessiveReturnSharpeRatio" ColumnName="ExcessiveReturnSharpeRatio" />
+                <ScalarProperty Name="ResidentialReturnSharpeRatio" ColumnName="ResidentialReturnSharpeRatio" />
+                <ScalarProperty Name="Determination" ColumnName="Determination" />
+                <ScalarProperty Name="DeterminationAlgorithm" ColumnName="DeterminationAlgorithm" />
+                <ScalarProperty Name="AverageAlgorithm" ColumnName="AverageAlgorithm" />
+                <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STK_MKT_RiskFactorDaily">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_RiskFactorDaily">
+              <MappingFragment StoreEntitySet="STK_MKT_RiskFactorDaily">
+                <ScalarProperty Name="TradingDate2" ColumnName="TradingDate2" />
+                <ScalarProperty Name="SecurityID" ColumnName="SecurityID" />
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
+                <ScalarProperty Name="Yield" ColumnName="Yield" />
+                <ScalarProperty Name="Volatility" ColumnName="Volatility" />
+                <ScalarProperty Name="Beta1" ColumnName="Beta1" />
+                <ScalarProperty Name="Beta2" ColumnName="Beta2" />
+                <ScalarProperty Name="Cor1" ColumnName="Cor1" />
+                <ScalarProperty Name="Cor2" ColumnName="Cor2" />
+                <ScalarProperty Name="NonSysRisk1" ColumnName="NonSysRisk1" />
+                <ScalarProperty Name="NonSysRisk2" ColumnName="NonSysRisk2" />
+                <ScalarProperty Name="Rsq1" ColumnName="Rsq1" />
+                <ScalarProperty Name="Rsq2" ColumnName="Rsq2" />
+                <ScalarProperty Name="ARsq1" ColumnName="ARsq1" />
+                <ScalarProperty Name="ARsq2" ColumnName="ARsq2" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STK_MKT_TradeDaily">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_TradeDaily">
+              <MappingFragment StoreEntitySet="STK_MKT_TradeDaily">
+                <ScalarProperty Name="TradeDate2" ColumnName="TradeDate2" />
+                <ScalarProperty Name="StockID" ColumnName="StockID" />
+                <ScalarProperty Name="TradeDate" ColumnName="TradeDate" />
+                <ScalarProperty Name="OpenPrice" ColumnName="OpenPrice" />
+                <ScalarProperty Name="HighPrice" ColumnName="HighPrice" />
+                <ScalarProperty Name="LowPrice" ColumnName="LowPrice" />
+                <ScalarProperty Name="ClosePrice" ColumnName="ClosePrice" />
+                <ScalarProperty Name="SumStockTrade" ColumnName="SumStockTrade" />
+                <ScalarProperty Name="SumVolumeTrade" ColumnName="SumVolumeTrade" />
+                <ScalarProperty Name="SumCirculatedMarketValue" ColumnName="SumCirculatedMarketValue" />
+                <ScalarProperty Name="SumTotalMarketValue" ColumnName="SumTotalMarketValue" />
+                <ScalarProperty Name="ReturnRateReinvest" ColumnName="ReturnRateReinvest" />
+                <ScalarProperty Name="ReturnRateNonReinvest" ColumnName="ReturnRateNonReinvest" />
+                <ScalarProperty Name="ClosePriceComparableReinvest" ColumnName="ClosePriceComparableReinvest" />
+                <ScalarProperty Name="ClosePriceComparableNonReinvest" ColumnName="ClosePriceComparableNonReinvest" />
+                <ScalarProperty Name="MarketType" ColumnName="MarketType" />
+                <ScalarProperty Name="LatestCapitalChangeDate" ColumnName="LatestCapitalChangeDate" />
+                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="TRD_Co">
             <EntityTypeMapping TypeName="astockModel.TRD_Co">
               <MappingFragment StoreEntitySet="TRD_Co">
-                <ScalarProperty Name="MarketType" ColumnName="MarketType" />
-                <ScalarProperty Name="HStockInterchangeCode" ColumnName="HStockInterchangeCode" />
-                <ScalarProperty Name="StatusChangeDate" ColumnName="StatusChangeDate" />
-                <ScalarProperty Name="ABStockInterchangeCode" ColumnName="ABStockInterchangeCode" />
-                <ScalarProperty Name="ActivenessCode" ColumnName="ActivenessCode" />
-                <ScalarProperty Name="ZoneCode" ColumnName="ZoneCode" />
-                <ScalarProperty Name="StockParValue" ColumnName="StockParValue" />
-                <ScalarProperty Name="StockIssueDate" ColumnName="StockIssueDate" />
-                <ScalarProperty Name="StockParCurrency" ColumnName="StockParCurrency" />
-                <ScalarProperty Name="StockIsseQuantity" ColumnName="StockIsseQuantity" />
-                <ScalarProperty Name="StockIssueCurrency" ColumnName="StockIssueCurrency" />
-                <ScalarProperty Name="StockIssuePrice" ColumnName="StockIssuePrice" />
-                <ScalarProperty Name="StockIssuePricePremium" ColumnName="StockIssuePricePremium" />
-                <ScalarProperty Name="TradingCurrency" ColumnName="TradingCurrency" />
-                <ScalarProperty Name="EarliestTradingRecordDate" ColumnName="EarliestTradingRecordDate" />
-                <ScalarProperty Name="IPODate" ColumnName="IPODate" />
-                <ScalarProperty Name="EstDate" ColumnName="EstDate" />
-                <ScalarProperty Name="IndustryNameC" ColumnName="IndustryNameC" />
-                <ScalarProperty Name="IndustryCodeC" ColumnName="IndustryCodeC" />
-                <ScalarProperty Name="IndustryNameB" ColumnName="IndustryNameB" />
-                <ScalarProperty Name="IndustryCodeB" ColumnName="IndustryCodeB" />
-                <ScalarProperty Name="IndustryNameA" ColumnName="IndustryNameA" />
-                <ScalarProperty Name="IndustryCodeA" ColumnName="IndustryCodeA" />
-                <ScalarProperty Name="CompanyNameEN" ColumnName="CompanyNameEN" />
-                <ScalarProperty Name="CompanyNameCN" ColumnName="CompanyNameCN" />
-                <ScalarProperty Name="StockName" ColumnName="StockName" />
-                <ScalarProperty Name="StockId" ColumnName="StockId" />
                 <ScalarProperty Name="CoutryId" ColumnName="CoutryId" />
+                <ScalarProperty Name="StockId" ColumnName="StockId" />
+                <ScalarProperty Name="StockName" ColumnName="StockName" />
+                <ScalarProperty Name="CompanyNameCN" ColumnName="CompanyNameCN" />
+                <ScalarProperty Name="CompanyNameEN" ColumnName="CompanyNameEN" />
+                <ScalarProperty Name="IndustryCodeA" ColumnName="IndustryCodeA" />
+                <ScalarProperty Name="IndustryNameA" ColumnName="IndustryNameA" />
+                <ScalarProperty Name="IndustryCodeB" ColumnName="IndustryCodeB" />
+                <ScalarProperty Name="IndustryNameB" ColumnName="IndustryNameB" />
+                <ScalarProperty Name="IndustryCodeC" ColumnName="IndustryCodeC" />
+                <ScalarProperty Name="IndustryNameC" ColumnName="IndustryNameC" />
+                <ScalarProperty Name="EstDate" ColumnName="EstDate" />
+                <ScalarProperty Name="IPODate" ColumnName="IPODate" />
+                <ScalarProperty Name="EarliestTradingRecordDate" ColumnName="EarliestTradingRecordDate" />
+                <ScalarProperty Name="TradingCurrency" ColumnName="TradingCurrency" />
+                <ScalarProperty Name="StockIssuePricePremium" ColumnName="StockIssuePricePremium" />
+                <ScalarProperty Name="StockIssuePrice" ColumnName="StockIssuePrice" />
+                <ScalarProperty Name="StockIssueCurrency" ColumnName="StockIssueCurrency" />
+                <ScalarProperty Name="StockIsseQuantity" ColumnName="StockIsseQuantity" />
+                <ScalarProperty Name="StockParCurrency" ColumnName="StockParCurrency" />
+                <ScalarProperty Name="StockIssueDate" ColumnName="StockIssueDate" />
+                <ScalarProperty Name="StockParValue" ColumnName="StockParValue" />
+                <ScalarProperty Name="ZoneCode" ColumnName="ZoneCode" />
+                <ScalarProperty Name="ActivenessCode" ColumnName="ActivenessCode" />
+                <ScalarProperty Name="ABStockInterchangeCode" ColumnName="ABStockInterchangeCode" />
+                <ScalarProperty Name="StatusChangeDate" ColumnName="StatusChangeDate" />
+                <ScalarProperty Name="HStockInterchangeCode" ColumnName="HStockInterchangeCode" />
+                <ScalarProperty Name="MarketType" ColumnName="MarketType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STK_MKT_ThreeFactorModelDaily">
+            <EntityTypeMapping TypeName="astockModel.STK_MKT_ThreeFactorModelDaily">
+              <MappingFragment StoreEntitySet="STK_MKT_ThreeFactorModelDaily">
+                <ScalarProperty Name="HML2" ColumnName="HML2" />
+                <ScalarProperty Name="HML1" ColumnName="HML1" />
+                <ScalarProperty Name="SMB2" ColumnName="SMB2" />
+                <ScalarProperty Name="SMB1" ColumnName="SMB1" />
+                <ScalarProperty Name="RiskPremium2" ColumnName="RiskPremium2" />
+                <ScalarProperty Name="RiskPremium1" ColumnName="RiskPremium1" />
+                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
+                <ScalarProperty Name="MarkettypeID" ColumnName="MarkettypeID" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TRD_Co_Quarter_DevIndex">
+            <EntityTypeMapping TypeName="astockModel.TRD_Co_Quarter_DevIndex">
+              <MappingFragment StoreEntitySet="TRD_Co_Quarter_DevIndex">
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+                <ScalarProperty Name="GrowthRateNetAssetValuePSB" ColumnName="GrowthRateNetAssetValuePSB" />
+                <ScalarProperty Name="GrowthRateNetAssetValuePSA" ColumnName="GrowthRateNetAssetValuePSA" />
+                <ScalarProperty Name="GrowthRateOwnerEquityB" ColumnName="GrowthRateOwnerEquityB" />
+                <ScalarProperty Name="GrowthRateOwnerEquityA" ColumnName="GrowthRateOwnerEquityA" />
+                <ScalarProperty Name="SustainableGrowthRate" ColumnName="SustainableGrowthRate" />
+                <ScalarProperty Name="GrowthRateNetFACashFlowB" ColumnName="GrowthRateNetFACashFlowB" />
+                <ScalarProperty Name="GrowthRateNetFACashFlowA" ColumnName="GrowthRateNetFACashFlowA" />
+                <ScalarProperty Name="C_GrowthRateNetIACashFlowB" ColumnName="'GrowthRateNetIACashFlowB" />
+                <ScalarProperty Name="C_GrowthRateNetIACashFlowA" ColumnName="'GrowthRateNetIACashFlowA" />
+                <ScalarProperty Name="C_GrowthRateNetOACashFlowB" ColumnName="'GrowthRateNetOACashFlowB" />
+                <ScalarProperty Name="C_GrowthRateNetOACashFlowA" ColumnName="'GrowthRateNetOACashFlowA" />
+                <ScalarProperty Name="GrowthRateNetOACashFlowPSB" ColumnName="GrowthRateNetOACashFlowPSB" />
+                <ScalarProperty Name="GrowthRateNetOACashFlowPSA" ColumnName="GrowthRateNetOACashFlowPSA" />
+                <ScalarProperty Name="Accurals" ColumnName="Accurals" />
+                <ScalarProperty Name="GrowthRateMgmtExpense" ColumnName="GrowthRateMgmtExpense" />
+                <ScalarProperty Name="GrowthRateMarketingExpense" ColumnName="GrowthRateMarketingExpense" />
+                <ScalarProperty Name="GrowthRateTotalOperatingCost" ColumnName="GrowthRateTotalOperatingCost" />
+                <ScalarProperty Name="GrowthRateGrossRevenue" ColumnName="GrowthRateGrossRevenue" />
+                <ScalarProperty Name="C_GrowthRateOperatingIncomeC" ColumnName="'GrowthRateOperatingIncomeC" />
+                <ScalarProperty Name="GrowthRateOperatingIncomeA" ColumnName="GrowthRateOperatingIncomeA" />
+                <ScalarProperty Name="GrowthRateTotalIncomeAttrToCompany" ColumnName="GrowthRateTotalIncomeAttrToCompany" />
+                <ScalarProperty Name="GrowthRateTotalIncome" ColumnName="GrowthRateTotalIncome" />
+                <ScalarProperty Name="GrowthRateNetProfitAttrToCompany" ColumnName="GrowthRateNetProfitAttrToCompany" />
+                <ScalarProperty Name="GrowthRateOperatingProfitB" ColumnName="GrowthRateOperatingProfitB" />
+                <ScalarProperty Name="GrowthRateOperatingProfitA" ColumnName="GrowthRateOperatingProfitA" />
+                <ScalarProperty Name="C_GrowthRateTotalProfitB" ColumnName="'GrowthRateTotalProfitB" />
+                <ScalarProperty Name="GrowthRateTotalProfitA" ColumnName="GrowthRateTotalProfitA" />
+                <ScalarProperty Name="GrowthRateNetProfitB" ColumnName="GrowthRateNetProfitB" />
+                <ScalarProperty Name="GrowthRateNetProfitA" ColumnName="GrowthRateNetProfitA" />
+                <ScalarProperty Name="GrowthRateDiluatedEPSB" ColumnName="GrowthRateDiluatedEPSB" />
+                <ScalarProperty Name="GrowthRateDiluatedEPSA" ColumnName="GrowthRateDiluatedEPSA" />
+                <ScalarProperty Name="GrowthRateEPSB" ColumnName="GrowthRateEPSB" />
+                <ScalarProperty Name="GrowthRateEPSA" ColumnName="GrowthRateEPSA" />
+                <ScalarProperty Name="GrowthRateROEB" ColumnName="GrowthRateROEB" />
+                <ScalarProperty Name="GrowthRateROEA" ColumnName="GrowthRateROEA" />
+                <ScalarProperty Name="TotalAssetGrowthRateB" ColumnName="TotalAssetGrowthRateB" />
+                <ScalarProperty Name="TotalAssetGrowthRateA" ColumnName="TotalAssetGrowthRateA" />
+                <ScalarProperty Name="FixedAssetGrowthRateB" ColumnName="FixedAssetGrowthRateB" />
+                <ScalarProperty Name="FixedAssetGrowthRateA" ColumnName="FixedAssetGrowthRateA" />
+                <ScalarProperty Name="RatioCapitalAccumulationAttrToCompany" ColumnName="RatioCapitalAccumulationAttrToCompany" />
+                <ScalarProperty Name="RatioCapitalAccumulationB" ColumnName="RatioCapitalAccumulationB" />
+                <ScalarProperty Name="RatioCapitalAccumulationA" ColumnName="RatioCapitalAccumulationA" />
+                <ScalarProperty Name="RatioCapitalHoldNRiseAttrToCompany" ColumnName="RatioCapitalHoldNRiseAttrToCompany" />
+                <ScalarProperty Name="C_RatioCapitalHoldNRiseB" ColumnName="'RatioCapitalHoldNRiseB" />
+                <ScalarProperty Name="RatioCapitalHoldNRiseA" ColumnName="RatioCapitalHoldNRiseA" />
+                <ScalarProperty Name="IndustryID" ColumnName="IndustryID" />
+                <ScalarProperty Name="TypeOfReport" ColumnName="TypeOfReport" />
+                <ScalarProperty Name="DateAsOfReporting" ColumnName="DateAsOfReporting" />
+                <ScalarProperty Name="StockID" ColumnName="StockID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TRD_Co_Quarter_ProfitIndex">
+            <EntityTypeMapping TypeName="astockModel.TRD_Co_Quarter_ProfitIndex">
+              <MappingFragment StoreEntitySet="TRD_Co_Quarter_ProfitIndex">
+                <ScalarProperty Name="DateAsOfReporting2" ColumnName="DateAsOfReporting2" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+                <ScalarProperty Name="ROI" ColumnName="ROI" />
+                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyTTM" ColumnName="ReturnOnTotalAssetAttrToCompanyTTM" />
+                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyC" ColumnName="ReturnOnTotalAssetAttrToCompanyC" />
+                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyB" ColumnName="ReturnOnTotalAssetAttrToCompanyB" />
+                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyA" ColumnName="ReturnOnTotalAssetAttrToCompanyA" />
+                <ScalarProperty Name="C_ReturnOnNetAssetAttrToCompanyTTM" ColumnName="'ReturnOnNetAssetAttrToCompanyTTM" />
+                <ScalarProperty Name="C_ReturnOnNetAssetAttrToCompanyC" ColumnName="'ReturnOnNetAssetAttrToCompanyC" />
+                <ScalarProperty Name="C_ReturnOnNetAssetAttrToCompanyB" ColumnName="'ReturnOnNetAssetAttrToCompanyB" />
+                <ScalarProperty Name="ReturnOnNetAssetAttrToCompanyA" ColumnName="ReturnOnNetAssetAttrToCompanyA" />
+                <ScalarProperty Name="TotalCashFlowToProfitTTM" ColumnName="TotalCashFlowToProfitTTM" />
+                <ScalarProperty Name="TotalCashFlowToProfit" ColumnName="TotalCashFlowToProfit" />
+                <ScalarProperty Name="EBITProfitRateTTM" ColumnName="EBITProfitRateTTM" />
+                <ScalarProperty Name="EBITProfitRate" ColumnName="EBITProfitRate" />
+                <ScalarProperty Name="EBITDAProfitRateTTM" ColumnName="EBITDAProfitRateTTM" />
+                <ScalarProperty Name="EBITDAProfitRate" ColumnName="EBITDAProfitRate" />
+                <ScalarProperty Name="AssetInpairmentLossTTM" ColumnName="AssetInpairmentLossTTM" />
+                <ScalarProperty Name="AssetInpairmentLoss" ColumnName="AssetInpairmentLoss" />
+                <ScalarProperty Name="ProfitToCostNExpenseTTM" ColumnName="ProfitToCostNExpenseTTM" />
+                <ScalarProperty Name="ProfitToCostNExpense" ColumnName="ProfitToCostNExpense" />
+                <ScalarProperty Name="SalesExpenseRateTTM" ColumnName="SalesExpenseRateTTM" />
+                <ScalarProperty Name="SalesExpenseRate" ColumnName="SalesExpenseRate" />
+                <ScalarProperty Name="FinanceExpenseRateTTM" ColumnName="FinanceExpenseRateTTM" />
+                <ScalarProperty Name="FinanceExpenseRate" ColumnName="FinanceExpenseRate" />
+                <ScalarProperty Name="MgmtExpenseRateTTM" ColumnName="MgmtExpenseRateTTM" />
+                <ScalarProperty Name="MgmtExpenseRate" ColumnName="MgmtExpenseRate" />
+                <ScalarProperty Name="MarketingExpenseRateTTM" ColumnName="MarketingExpenseRateTTM" />
+                <ScalarProperty Name="MarketingExpenseRate" ColumnName="MarketingExpenseRate" />
+                <ScalarProperty Name="TotalOperatingCostRateTMM" ColumnName="TotalOperatingCostRateTMM" />
+                <ScalarProperty Name="TotalOperatingCostRate" ColumnName="TotalOperatingCostRate" />
+                <ScalarProperty Name="OperatingMarginTTM" ColumnName="OperatingMarginTTM" />
+                <ScalarProperty Name="OperatingMargin" ColumnName="OperatingMargin" />
+                <ScalarProperty Name="OperatingProfitRateTTM" ColumnName="OperatingProfitRateTTM" />
+                <ScalarProperty Name="OperatingProfitRate" ColumnName="OperatingProfitRate" />
+                <ScalarProperty Name="OperatingCostRateTTM" ColumnName="OperatingCostRateTTM" />
+                <ScalarProperty Name="OperatingCostRate" ColumnName="OperatingCostRate" />
+                <ScalarProperty Name="GrossMarginTTM" ColumnName="GrossMarginTTM" />
+                <ScalarProperty Name="GrossMargin" ColumnName="GrossMargin" />
+                <ScalarProperty Name="LongTermROE" ColumnName="LongTermROE" />
+                <ScalarProperty Name="ReturnOnCapitalEmployed" ColumnName="ReturnOnCapitalEmployed" />
+                <ScalarProperty Name="RatioEBITDAToTotalAsset" ColumnName="RatioEBITDAToTotalAsset" />
+                <ScalarProperty Name="RatioTotalProfitToEBITDA" ColumnName="RatioTotalProfitToEBITDA" />
+                <ScalarProperty Name="RatioNetToGrossProfit" ColumnName="RatioNetToGrossProfit" />
+                <ScalarProperty Name="EBITDATTM" ColumnName="EBITDATTM" />
+                <ScalarProperty Name="EBITDA" ColumnName="EBITDA" />
+                <ScalarProperty Name="NOPLAT" ColumnName="NOPLAT" />
+                <ScalarProperty Name="EBITTTM" ColumnName="EBITTTM" />
+                <ScalarProperty Name="EBIT" ColumnName="EBIT" />
+                <ScalarProperty Name="C_ReturnOnNetAssetValueTTM" ColumnName="'ReturnOnNetAssetValueTTM" />
+                <ScalarProperty Name="C_ReturnOnNetAssetValueC" ColumnName="'ReturnOnNetAssetValueC" />
+                <ScalarProperty Name="C_ReturnOnNetAssetValueB" ColumnName="'ReturnOnNetAssetValueB" />
+                <ScalarProperty Name="ReturnOnNetAssetValueA" ColumnName="ReturnOnNetAssetValueA" />
+                <ScalarProperty Name="ReturnOnFixedAssetValueTTM" ColumnName="ReturnOnFixedAssetValueTTM" />
+                <ScalarProperty Name="ReturnOnFixedAssetValueC" ColumnName="ReturnOnFixedAssetValueC" />
+                <ScalarProperty Name="ReturnOnFixedAssetValueB" ColumnName="ReturnOnFixedAssetValueB" />
+                <ScalarProperty Name="ReturnOnFixedAssetValueA" ColumnName="ReturnOnFixedAssetValueA" />
+                <ScalarProperty Name="ReturnOnLiquidityTTM" ColumnName="ReturnOnLiquidityTTM" />
+                <ScalarProperty Name="ReturnOnLiquidityC" ColumnName="ReturnOnLiquidityC" />
+                <ScalarProperty Name="ReturnOnLiquidityB" ColumnName="ReturnOnLiquidityB" />
+                <ScalarProperty Name="ReturnOnLiquidityA" ColumnName="ReturnOnLiquidityA" />
+                <ScalarProperty Name="ReturnOnTotalAssetTTM" ColumnName="ReturnOnTotalAssetTTM" />
+                <ScalarProperty Name="ReturnOnTotalAssetC" ColumnName="ReturnOnTotalAssetC" />
+                <ScalarProperty Name="ReturnOnTotalAssetB" ColumnName="ReturnOnTotalAssetB" />
+                <ScalarProperty Name="ReturnOnTotalAssetA" ColumnName="ReturnOnTotalAssetA" />
+                <ScalarProperty Name="ReturnOnAssetTTM" ColumnName="ReturnOnAssetTTM" />
+                <ScalarProperty Name="ReturnOnAssetC" ColumnName="ReturnOnAssetC" />
+                <ScalarProperty Name="ReturnOnAssetB" ColumnName="ReturnOnAssetB" />
+                <ScalarProperty Name="ReturnOnAssetA" ColumnName="ReturnOnAssetA" />
+                <ScalarProperty Name="IndustryID" ColumnName="IndustryID" />
+                <ScalarProperty Name="TypeOfReport" ColumnName="TypeOfReport" />
+                <ScalarProperty Name="DateAsOfReporting" ColumnName="DateAsOfReporting" />
+                <ScalarProperty Name="StockID" ColumnName="StockID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1161,276 +1297,6 @@
                 <ScalarProperty Name="TypeOfReport" ColumnName="TypeOfReport" />
                 <ScalarProperty Name="DateAsOfReporting" ColumnName="DateAsOfReporting" />
                 <ScalarProperty Name="StockID" ColumnName="StockID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TRD_Co_Quarter_DevIndex">
-            <EntityTypeMapping TypeName="astockModel.TRD_Co_Quarter_DevIndex">
-              <MappingFragment StoreEntitySet="TRD_Co_Quarter_DevIndex">
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-                <ScalarProperty Name="GrowthRateNetAssetValuePSB" ColumnName="GrowthRateNetAssetValuePSB" />
-                <ScalarProperty Name="GrowthRateNetAssetValuePSA" ColumnName="GrowthRateNetAssetValuePSA" />
-                <ScalarProperty Name="GrowthRateOwnerEquityB" ColumnName="GrowthRateOwnerEquityB" />
-                <ScalarProperty Name="GrowthRateOwnerEquityA" ColumnName="GrowthRateOwnerEquityA" />
-                <ScalarProperty Name="SustainableGrowthRate" ColumnName="SustainableGrowthRate" />
-                <ScalarProperty Name="GrowthRateNetFACashFlowB" ColumnName="GrowthRateNetFACashFlowB" />
-                <ScalarProperty Name="GrowthRateNetFACashFlowA" ColumnName="GrowthRateNetFACashFlowA" />
-                <ScalarProperty Name="C_GrowthRateNetIACashFlowB" ColumnName="'GrowthRateNetIACashFlowB" />
-                <ScalarProperty Name="C_GrowthRateNetIACashFlowA" ColumnName="'GrowthRateNetIACashFlowA" />
-                <ScalarProperty Name="C_GrowthRateNetOACashFlowB" ColumnName="'GrowthRateNetOACashFlowB" />
-                <ScalarProperty Name="C_GrowthRateNetOACashFlowA" ColumnName="'GrowthRateNetOACashFlowA" />
-                <ScalarProperty Name="GrowthRateNetOACashFlowPSB" ColumnName="GrowthRateNetOACashFlowPSB" />
-                <ScalarProperty Name="GrowthRateNetOACashFlowPSA" ColumnName="GrowthRateNetOACashFlowPSA" />
-                <ScalarProperty Name="Accurals" ColumnName="Accurals" />
-                <ScalarProperty Name="GrowthRateMgmtExpense" ColumnName="GrowthRateMgmtExpense" />
-                <ScalarProperty Name="GrowthRateMarketingExpense" ColumnName="GrowthRateMarketingExpense" />
-                <ScalarProperty Name="GrowthRateTotalOperatingCost" ColumnName="GrowthRateTotalOperatingCost" />
-                <ScalarProperty Name="GrowthRateGrossRevenue" ColumnName="GrowthRateGrossRevenue" />
-                <ScalarProperty Name="C_GrowthRateOperatingIncomeC" ColumnName="'GrowthRateOperatingIncomeC" />
-                <ScalarProperty Name="GrowthRateOperatingIncomeA" ColumnName="GrowthRateOperatingIncomeA" />
-                <ScalarProperty Name="GrowthRateTotalIncomeAttrToCompany" ColumnName="GrowthRateTotalIncomeAttrToCompany" />
-                <ScalarProperty Name="GrowthRateTotalIncome" ColumnName="GrowthRateTotalIncome" />
-                <ScalarProperty Name="GrowthRateNetProfitAttrToCompany" ColumnName="GrowthRateNetProfitAttrToCompany" />
-                <ScalarProperty Name="GrowthRateOperatingProfitB" ColumnName="GrowthRateOperatingProfitB" />
-                <ScalarProperty Name="GrowthRateOperatingProfitA" ColumnName="GrowthRateOperatingProfitA" />
-                <ScalarProperty Name="C_GrowthRateTotalProfitB" ColumnName="'GrowthRateTotalProfitB" />
-                <ScalarProperty Name="GrowthRateTotalProfitA" ColumnName="GrowthRateTotalProfitA" />
-                <ScalarProperty Name="GrowthRateNetProfitB" ColumnName="GrowthRateNetProfitB" />
-                <ScalarProperty Name="GrowthRateNetProfitA" ColumnName="GrowthRateNetProfitA" />
-                <ScalarProperty Name="GrowthRateDiluatedEPSB" ColumnName="GrowthRateDiluatedEPSB" />
-                <ScalarProperty Name="GrowthRateDiluatedEPSA" ColumnName="GrowthRateDiluatedEPSA" />
-                <ScalarProperty Name="GrowthRateEPSB" ColumnName="GrowthRateEPSB" />
-                <ScalarProperty Name="GrowthRateEPSA" ColumnName="GrowthRateEPSA" />
-                <ScalarProperty Name="GrowthRateROEB" ColumnName="GrowthRateROEB" />
-                <ScalarProperty Name="GrowthRateROEA" ColumnName="GrowthRateROEA" />
-                <ScalarProperty Name="TotalAssetGrowthRateB" ColumnName="TotalAssetGrowthRateB" />
-                <ScalarProperty Name="TotalAssetGrowthRateA" ColumnName="TotalAssetGrowthRateA" />
-                <ScalarProperty Name="FixedAssetGrowthRateB" ColumnName="FixedAssetGrowthRateB" />
-                <ScalarProperty Name="FixedAssetGrowthRateA" ColumnName="FixedAssetGrowthRateA" />
-                <ScalarProperty Name="RatioCapitalAccumulationAttrToCompany" ColumnName="RatioCapitalAccumulationAttrToCompany" />
-                <ScalarProperty Name="RatioCapitalAccumulationB" ColumnName="RatioCapitalAccumulationB" />
-                <ScalarProperty Name="RatioCapitalAccumulationA" ColumnName="RatioCapitalAccumulationA" />
-                <ScalarProperty Name="RatioCapitalHoldNRiseAttrToCompany" ColumnName="RatioCapitalHoldNRiseAttrToCompany" />
-                <ScalarProperty Name="C_RatioCapitalHoldNRiseB" ColumnName="'RatioCapitalHoldNRiseB" />
-                <ScalarProperty Name="RatioCapitalHoldNRiseA" ColumnName="RatioCapitalHoldNRiseA" />
-                <ScalarProperty Name="IndustryID" ColumnName="IndustryID" />
-                <ScalarProperty Name="TypeOfReport" ColumnName="TypeOfReport" />
-                <ScalarProperty Name="DateAsOfReporting" ColumnName="DateAsOfReporting" />
-                <ScalarProperty Name="StockID" ColumnName="StockID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TRD_Co_Quarter_ProfitIndex">
-            <EntityTypeMapping TypeName="astockModel.TRD_Co_Quarter_ProfitIndex">
-              <MappingFragment StoreEntitySet="TRD_Co_Quarter_ProfitIndex">
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-                <ScalarProperty Name="ROI" ColumnName="ROI" />
-                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyTTM" ColumnName="ReturnOnTotalAssetAttrToCompanyTTM" />
-                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyC" ColumnName="ReturnOnTotalAssetAttrToCompanyC" />
-                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyB" ColumnName="ReturnOnTotalAssetAttrToCompanyB" />
-                <ScalarProperty Name="ReturnOnTotalAssetAttrToCompanyA" ColumnName="ReturnOnTotalAssetAttrToCompanyA" />
-                <ScalarProperty Name="C_ReturnOnNetAssetAttrToCompanyTTM" ColumnName="'ReturnOnNetAssetAttrToCompanyTTM" />
-                <ScalarProperty Name="C_ReturnOnNetAssetAttrToCompanyC" ColumnName="'ReturnOnNetAssetAttrToCompanyC" />
-                <ScalarProperty Name="C_ReturnOnNetAssetAttrToCompanyB" ColumnName="'ReturnOnNetAssetAttrToCompanyB" />
-                <ScalarProperty Name="ReturnOnNetAssetAttrToCompanyA" ColumnName="ReturnOnNetAssetAttrToCompanyA" />
-                <ScalarProperty Name="TotalCashFlowToProfitTTM" ColumnName="TotalCashFlowToProfitTTM" />
-                <ScalarProperty Name="TotalCashFlowToProfit" ColumnName="TotalCashFlowToProfit" />
-                <ScalarProperty Name="EBITProfitRateTTM" ColumnName="EBITProfitRateTTM" />
-                <ScalarProperty Name="EBITProfitRate" ColumnName="EBITProfitRate" />
-                <ScalarProperty Name="EBITDAProfitRateTTM" ColumnName="EBITDAProfitRateTTM" />
-                <ScalarProperty Name="EBITDAProfitRate" ColumnName="EBITDAProfitRate" />
-                <ScalarProperty Name="AssetInpairmentLossTTM" ColumnName="AssetInpairmentLossTTM" />
-                <ScalarProperty Name="AssetInpairmentLoss" ColumnName="AssetInpairmentLoss" />
-                <ScalarProperty Name="ProfitToCostNExpenseTTM" ColumnName="ProfitToCostNExpenseTTM" />
-                <ScalarProperty Name="ProfitToCostNExpense" ColumnName="ProfitToCostNExpense" />
-                <ScalarProperty Name="SalesExpenseRateTTM" ColumnName="SalesExpenseRateTTM" />
-                <ScalarProperty Name="SalesExpenseRate" ColumnName="SalesExpenseRate" />
-                <ScalarProperty Name="FinanceExpenseRateTTM" ColumnName="FinanceExpenseRateTTM" />
-                <ScalarProperty Name="FinanceExpenseRate" ColumnName="FinanceExpenseRate" />
-                <ScalarProperty Name="MgmtExpenseRateTTM" ColumnName="MgmtExpenseRateTTM" />
-                <ScalarProperty Name="MgmtExpenseRate" ColumnName="MgmtExpenseRate" />
-                <ScalarProperty Name="MarketingExpenseRateTTM" ColumnName="MarketingExpenseRateTTM" />
-                <ScalarProperty Name="MarketingExpenseRate" ColumnName="MarketingExpenseRate" />
-                <ScalarProperty Name="TotalOperatingCostRateTMM" ColumnName="TotalOperatingCostRateTMM" />
-                <ScalarProperty Name="TotalOperatingCostRate" ColumnName="TotalOperatingCostRate" />
-                <ScalarProperty Name="OperatingMarginTTM" ColumnName="OperatingMarginTTM" />
-                <ScalarProperty Name="OperatingMargin" ColumnName="OperatingMargin" />
-                <ScalarProperty Name="OperatingProfitRateTTM" ColumnName="OperatingProfitRateTTM" />
-                <ScalarProperty Name="OperatingProfitRate" ColumnName="OperatingProfitRate" />
-                <ScalarProperty Name="OperatingCostRateTTM" ColumnName="OperatingCostRateTTM" />
-                <ScalarProperty Name="OperatingCostRate" ColumnName="OperatingCostRate" />
-                <ScalarProperty Name="GrossMarginTTM" ColumnName="GrossMarginTTM" />
-                <ScalarProperty Name="GrossMargin" ColumnName="GrossMargin" />
-                <ScalarProperty Name="LongTermROE" ColumnName="LongTermROE" />
-                <ScalarProperty Name="ReturnOnCapitalEmployed" ColumnName="ReturnOnCapitalEmployed" />
-                <ScalarProperty Name="RatioEBITDAToTotalAsset" ColumnName="RatioEBITDAToTotalAsset" />
-                <ScalarProperty Name="RatioTotalProfitToEBITDA" ColumnName="RatioTotalProfitToEBITDA" />
-                <ScalarProperty Name="RatioNetToGrossProfit" ColumnName="RatioNetToGrossProfit" />
-                <ScalarProperty Name="EBITDATTM" ColumnName="EBITDATTM" />
-                <ScalarProperty Name="EBITDA" ColumnName="EBITDA" />
-                <ScalarProperty Name="NOPLAT" ColumnName="NOPLAT" />
-                <ScalarProperty Name="EBITTTM" ColumnName="EBITTTM" />
-                <ScalarProperty Name="EBIT" ColumnName="EBIT" />
-                <ScalarProperty Name="C_ReturnOnNetAssetValueTTM" ColumnName="'ReturnOnNetAssetValueTTM" />
-                <ScalarProperty Name="C_ReturnOnNetAssetValueC" ColumnName="'ReturnOnNetAssetValueC" />
-                <ScalarProperty Name="C_ReturnOnNetAssetValueB" ColumnName="'ReturnOnNetAssetValueB" />
-                <ScalarProperty Name="ReturnOnNetAssetValueA" ColumnName="ReturnOnNetAssetValueA" />
-                <ScalarProperty Name="ReturnOnFixedAssetValueTTM" ColumnName="ReturnOnFixedAssetValueTTM" />
-                <ScalarProperty Name="ReturnOnFixedAssetValueC" ColumnName="ReturnOnFixedAssetValueC" />
-                <ScalarProperty Name="ReturnOnFixedAssetValueB" ColumnName="ReturnOnFixedAssetValueB" />
-                <ScalarProperty Name="ReturnOnFixedAssetValueA" ColumnName="ReturnOnFixedAssetValueA" />
-                <ScalarProperty Name="ReturnOnLiquidityTTM" ColumnName="ReturnOnLiquidityTTM" />
-                <ScalarProperty Name="ReturnOnLiquidityC" ColumnName="ReturnOnLiquidityC" />
-                <ScalarProperty Name="ReturnOnLiquidityB" ColumnName="ReturnOnLiquidityB" />
-                <ScalarProperty Name="ReturnOnLiquidityA" ColumnName="ReturnOnLiquidityA" />
-                <ScalarProperty Name="ReturnOnTotalAssetTTM" ColumnName="ReturnOnTotalAssetTTM" />
-                <ScalarProperty Name="ReturnOnTotalAssetC" ColumnName="ReturnOnTotalAssetC" />
-                <ScalarProperty Name="ReturnOnTotalAssetB" ColumnName="ReturnOnTotalAssetB" />
-                <ScalarProperty Name="ReturnOnTotalAssetA" ColumnName="ReturnOnTotalAssetA" />
-                <ScalarProperty Name="ReturnOnAssetTTM" ColumnName="ReturnOnAssetTTM" />
-                <ScalarProperty Name="ReturnOnAssetC" ColumnName="ReturnOnAssetC" />
-                <ScalarProperty Name="ReturnOnAssetB" ColumnName="ReturnOnAssetB" />
-                <ScalarProperty Name="ReturnOnAssetA" ColumnName="ReturnOnAssetA" />
-                <ScalarProperty Name="IndustryID" ColumnName="IndustryID" />
-                <ScalarProperty Name="TypeOfReport" ColumnName="TypeOfReport" />
-                <ScalarProperty Name="DateAsOfReporting" ColumnName="DateAsOfReporting" />
-                <ScalarProperty Name="StockID" ColumnName="StockID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_DeriativeTradingIndexDaily">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_DeriativeTradingIndexDaily">
-              <MappingFragment StoreEntitySet="STK_MKT_DeriativeTradingIndexDaily">
-                <ScalarProperty Name="Liquidility" ColumnName="Liquidility" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="ChangeRatio" ColumnName="ChangeRatio" />
-                <ScalarProperty Name="CirculatedMarketValue" ColumnName="CirculatedMarketValue" />
-                <ScalarProperty Name="Turnover" ColumnName="Turnover" />
-                <ScalarProperty Name="PS" ColumnName="PS" />
-                <ScalarProperty Name="PCF" ColumnName="PCF" />
-                <ScalarProperty Name="PB" ColumnName="PB" />
-                <ScalarProperty Name="PE" ColumnName="PE" />
-                <ScalarProperty Name="Ret" ColumnName="Ret" />
-                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
-                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
-                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
-                <ScalarProperty Name="SecurityID" ColumnName="SecurityID" />
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_RiskFactorDaily">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_RiskFactorDaily">
-              <MappingFragment StoreEntitySet="STK_MKT_RiskFactorDaily">
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-                <ScalarProperty Name="ARsq2" ColumnName="ARsq2" />
-                <ScalarProperty Name="ARsq1" ColumnName="ARsq1" />
-                <ScalarProperty Name="Rsq2" ColumnName="Rsq2" />
-                <ScalarProperty Name="Rsq1" ColumnName="Rsq1" />
-                <ScalarProperty Name="NonSysRisk2" ColumnName="NonSysRisk2" />
-                <ScalarProperty Name="NonSysRisk1" ColumnName="NonSysRisk1" />
-                <ScalarProperty Name="Cor2" ColumnName="Cor2" />
-                <ScalarProperty Name="Cor1" ColumnName="Cor1" />
-                <ScalarProperty Name="Beta2" ColumnName="Beta2" />
-                <ScalarProperty Name="Beta1" ColumnName="Beta1" />
-                <ScalarProperty Name="Volatility" ColumnName="Volatility" />
-                <ScalarProperty Name="Yield" ColumnName="Yield" />
-                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
-                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
-                <ScalarProperty Name="SecurityID" ColumnName="SecurityID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_ThreeFactorModelDaily">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_ThreeFactorModelDaily">
-              <MappingFragment StoreEntitySet="STK_MKT_ThreeFactorModelDaily">
-                <ScalarProperty Name="HML2" ColumnName="HML2" />
-                <ScalarProperty Name="HML1" ColumnName="HML1" />
-                <ScalarProperty Name="SMB2" ColumnName="SMB2" />
-                <ScalarProperty Name="SMB1" ColumnName="SMB1" />
-                <ScalarProperty Name="RiskPremium2" ColumnName="RiskPremium2" />
-                <ScalarProperty Name="RiskPremium1" ColumnName="RiskPremium1" />
-                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
-                <ScalarProperty Name="MarkettypeID" ColumnName="MarkettypeID" />
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_ConsolidatedReturn">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_ConsolidatedReturn">
-              <MappingFragment StoreEntitySet="STK_MKT_ConsolidatedReturn">
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-                <ScalarProperty Name="NumOfCompaniesInCal" ColumnName="NumOfCompaniesInCal" />
-                <ScalarProperty Name="TotalMarketCapitalWeightedReturnRateNonReinvest" ColumnName="TotalMarketCapitalWeightedReturnRateNonReinvest" />
-                <ScalarProperty Name="TotalMarketCapitalWeightedReturnRateReinvest" ColumnName="TotalMarketCapitalWeightedReturnRateReinvest" />
-                <ScalarProperty Name="CirculatedMarketCapitalWeightedReturnRateNonReinvest" ColumnName="CirculatedMarketCapitalWeightedReturnRateNonReinvest" />
-                <ScalarProperty Name="CirculatedMarketCapitalWeightedReturnRateReinvest" ColumnName="CirculatedMarketCapitalWeightedReturnRateReinvest" />
-                <ScalarProperty Name="AverageWeightReturnRateNonReinvest" ColumnName="AverageWeightReturnRateNonReinvest" />
-                <ScalarProperty Name="AverageWeightReturnRateReinvest" ColumnName="AverageWeightReturnRateReinvest" />
-                <ScalarProperty Name="TransactionValueAmount" ColumnName="TransactionValueAmount" />
-                <ScalarProperty Name="SharesExchangedAmount" ColumnName="SharesExchangedAmount" />
-                <ScalarProperty Name="TradeDate" ColumnName="TradeDate" />
-                <ScalarProperty Name="MarketType" ColumnName="MarketType" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_TradeDaily">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_TradeDaily">
-              <MappingFragment StoreEntitySet="STK_MKT_TradeDaily">
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
-                <ScalarProperty Name="LatestCapitalChangeDate" ColumnName="LatestCapitalChangeDate" />
-                <ScalarProperty Name="MarketType" ColumnName="MarketType" />
-                <ScalarProperty Name="ClosePriceComparableNonReinvest" ColumnName="ClosePriceComparableNonReinvest" />
-                <ScalarProperty Name="ClosePriceComparableReinvest" ColumnName="ClosePriceComparableReinvest" />
-                <ScalarProperty Name="ReturnRateNonReinvest" ColumnName="ReturnRateNonReinvest" />
-                <ScalarProperty Name="ReturnRateReinvest" ColumnName="ReturnRateReinvest" />
-                <ScalarProperty Name="SumTotalMarketValue" ColumnName="SumTotalMarketValue" />
-                <ScalarProperty Name="SumCirculatedMarketValue" ColumnName="SumCirculatedMarketValue" />
-                <ScalarProperty Name="SumVolumeTrade" ColumnName="SumVolumeTrade" />
-                <ScalarProperty Name="SumStockTrade" ColumnName="SumStockTrade" />
-                <ScalarProperty Name="ClosePrice" ColumnName="ClosePrice" />
-                <ScalarProperty Name="LowPrice" ColumnName="LowPrice" />
-                <ScalarProperty Name="HighPrice" ColumnName="HighPrice" />
-                <ScalarProperty Name="OpenPrice" ColumnName="OpenPrice" />
-                <ScalarProperty Name="TradeDate" ColumnName="TradeDate" />
-                <ScalarProperty Name="StockID" ColumnName="StockID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_PortfolioBase">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_PortfolioBase">
-              <MappingFragment StoreEntitySet="STK_MKT_PortfolioBase">
-                <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
-                <ScalarProperty Name="AverageAlgorithm" ColumnName="AverageAlgorithm" />
-                <ScalarProperty Name="DeterminationAlgorithm" ColumnName="DeterminationAlgorithm" />
-                <ScalarProperty Name="Determination" ColumnName="Determination" />
-                <ScalarProperty Name="ResidentialReturnSharpeRatio" ColumnName="ResidentialReturnSharpeRatio" />
-                <ScalarProperty Name="ExcessiveReturnSharpeRatio" ColumnName="ExcessiveReturnSharpeRatio" />
-                <ScalarProperty Name="ResidentialReturnRisk" ColumnName="ResidentialReturnRisk" />
-                <ScalarProperty Name="ExcessiveReturnRisk" ColumnName="ExcessiveReturnRisk" />
-                <ScalarProperty Name="ResidentialReturn2" ColumnName="ResidentialReturn2" />
-                <ScalarProperty Name="ResidentialReturn1" ColumnName="ResidentialReturn1" />
-                <ScalarProperty Name="ExcessiveReturn2" ColumnName="ExcessiveReturn2" />
-                <ScalarProperty Name="ExcessiveReturn1" ColumnName="ExcessiveReturn1" />
-                <ScalarProperty Name="CreationTime" ColumnName="CreationTime" />
-                <ScalarProperty Name="StockId" ColumnName="StockId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STK_MKT_IndexDaily">
-            <EntityTypeMapping TypeName="astockModel.STK_MKT_IndexDaily">
-              <MappingFragment StoreEntitySet="STK_MKT_IndexDaily">
-                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
-                <ScalarProperty Name="IndexReturnRate" ColumnName="IndexReturnRate" />
-                <ScalarProperty Name="ConstituentStockTradeAmount" ColumnName="ConstituentStockTradeAmount" />
-                <ScalarProperty Name="ConstituentStockTradeVolume" ColumnName="ConstituentStockTradeVolume" />
-                <ScalarProperty Name="CloseIndex" ColumnName="CloseIndex" />
-                <ScalarProperty Name="LowIndex" ColumnName="LowIndex" />
-                <ScalarProperty Name="HighIndex" ColumnName="HighIndex" />
-                <ScalarProperty Name="OpenIndex" ColumnName="OpenIndex" />
-                <ScalarProperty Name="TradingDate" ColumnName="TradingDate" />
-                <ScalarProperty Name="IndexID" ColumnName="IndexID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

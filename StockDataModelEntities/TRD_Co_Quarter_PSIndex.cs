@@ -71,7 +71,5 @@ namespace StockDataModelEntities
         public Nullable<double> NetCashFlowPS2 { get; set; }
         public Nullable<double> NetCashFlowTTMPS2 { get; set; }
         public System.Guid UniqueID { get; set; }
-    
-        public virtual TRD_Co TRD_Co { get; set; }
     }
 }

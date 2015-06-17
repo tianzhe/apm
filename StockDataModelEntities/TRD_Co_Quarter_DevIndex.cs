@@ -64,7 +64,5 @@ namespace StockDataModelEntities
         public Nullable<double> GrowthRateNetAssetValuePSA { get; set; }
         public Nullable<double> GrowthRateNetAssetValuePSB { get; set; }
         public System.Guid UniqueID { get; set; }
-    
-        public virtual TRD_Co TRD_Co { get; set; }
     }
 }

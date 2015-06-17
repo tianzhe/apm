@@ -7,6 +7,7 @@ using StockDataModelEntities;
 using System.Configuration;
 using System.IO;
 using System.Collections;
+using System.Threading;
 using log4net;
 
 namespace apm
@@ -133,6 +134,11 @@ namespace apm
                     var company = _astock.TRD_Co
                         .Where(firm => firm.StockId.Equals(v.StockId, StringComparison.InvariantCultureIgnoreCase))
                         .FirstOrDefault();
+
+                    var profit = _astock.TRD_Co_Quarter_ProfitIndex
+                        .Where(tmp => tmp.StockID.Equals(company.StockId, StringComparison.InvariantCultureIgnoreCase))
+                        .OrderByDescending(tmp => tmp.DateAsOfReporting2).ToList();
+ 
                     var item = new PfStock
                     {
                         IndustryTopLevel = company.IndustryNameA,
@@ -145,7 +151,14 @@ namespace apm
                         CirculatedMarketValue = v.CirculatedMarketValue,
                         Turnover = v.Turnover,
                         Liquidity = v.Liquidity,
-                        PriceEarningRate = v.PriceEarningRate
+                        PriceEarningRate = v.PriceEarningRate,
+                        LatestLongTermROE = profit.Count == 0 ? 0 : (double)profit.ElementAt(0).LongTermROE,
+                        LatestClosePrice = v.LatestClosePrice,
+                        AveragePriceInPastWeek = v.AveragePricePastWeek,
+                        AveragePriceInPastMonth = v.AveragePricePastMonth,
+                        AveragePriceInPastThreeMonth = v.AveragePricePastThreeMonth,
+                        AveragePriceInPastSixMonth = v.AveragePricePastSixMonth,
+                        AveragePriceInPastYear = v.AveragePricePastYear
                     };
                     p.collection.Add(item);
 
@@ -171,8 +184,33 @@ namespace apm
                     _astock.STK_MKT_PortfolioBase.Add(pfBase);
                 }
             }
-            
-            _astock.SaveChanges();
+
+            try
+            {
+                _astock.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                _logger.ErrorFormat(
+                    string.Format("Unexpected error: failed to write to DB table STK_MKT_PortfolioBase.\nMessage = {0}\nStack Trace : \n{1}",
+                    e.Message,
+                    e.StackTrace));
+
+                if (e.InnerException != null)
+                {
+                    _logger.ErrorFormat(
+                        string.Format("Inner exception : \nMessage = {0}\nStack Trace : \n{1}",
+                        e.InnerException.Message,
+                        e.InnerException.StackTrace));
+                }
+
+                //throw e;
+
+                //TODO
+                Thread.Sleep(20000);
+                _astock.SaveChanges();
+            }
+           
 
             p.Hold = DateTime.Now;
             p.Time = 7;
@@ -233,11 +271,13 @@ namespace apm
                 {
                     foreach (var dic in p.collection.OrderByDescending(c => c.Determination).OrderBy(c => c.IndustryTopLevel))
                     {
-                        writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6:F}%,{7:F},{8}%,{9:F},{10:F}",
-                            dic.IndustryTopLevel, dic.Industry2ndLevel,
-                            dic.Industry3rdLevel, dic.StockID, dic.FirmShortName,
-                            dic.FirmFullName, dic.Determination, dic.CirculatedMarketValue / 1000000,
-                            dic.Turnover, dic.Liquidity * 100, dic.PriceEarningRate));
+                        writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6:F}%,{7:F},{8}%,{9:F},{10:F},{11:F}%,{12},{13:F},{14:F},{15:F},{16:F},{17:F}",
+                            dic.IndustryTopLevel, dic.Industry2ndLevel, dic.Industry3rdLevel, 
+                            dic.StockID, dic.FirmShortName, dic.FirmFullName, 
+                            dic.Determination, dic.CirculatedMarketValue / 1000000, dic.Turnover, 
+                            dic.Liquidity * 100, dic.PriceEarningRate, dic.LatestLongTermROE * 100, 
+                            dic.LatestClosePrice, dic.AveragePriceInPastWeek, dic.AveragePriceInPastMonth, 
+                            dic.AveragePriceInPastThreeMonth, dic.AveragePriceInPastSixMonth, dic.AveragePriceInPastYear));
                     }
 
                     //foreach (var dic in finalDecision)
@@ -556,38 +596,41 @@ namespace apm
         private StockIndex CalculatePremiumReturn(string stockId, double marketType)
         {
             var rawDailyBeta = _astock.STK_MKT_RiskFactorDaily
-                .Where(co => co.Symbol.Equals(stockId, StringComparison.InvariantCultureIgnoreCase))
-                .Select(co => new{ co.Beta1, co.TradingDate }).ToList();
+                .Where(co => co.Symbol.Equals(stockId, StringComparison.InvariantCultureIgnoreCase) && co.TradingDate2 >= _startDate && co.TradingDate2 <= _endDate)
+                .Select(co => new{ co.Beta1, date = co.TradingDate2 })
+                .OrderByDescending(co => co.date).ToList();
 
-            var convertedDailyBeta = rawDailyBeta.
-                Select(co => new { co.Beta1, date = DateTime.Parse(co.TradingDate) }).ToList();
+            //var convertedDailyBeta = rawDailyBeta.
+            //    Select(co => new { co.Beta1, date = DateTime.Parse(co.TradingDate) }).ToList();
 
-            var timeConstrainedDailyBeta = convertedDailyBeta
-                .Where(co => co.date >= _startDate && co.date <= _endDate)
-                .OrderBy(co => co.date).ToList();
+            //var timeConstrainedDailyBeta = convertedDailyBeta
+            //    .Where(co => co.date >= _startDate && co.date <= _endDate)
+            //    .OrderBy(co => co.date).ToList();
 
             var rawDailyReturn = _astock.STK_MKT_TradeDaily
-                .Where(co => co.StockID.Equals(stockId, StringComparison.InvariantCultureIgnoreCase) && co.TradeStatus == 1)
-                .Select(co => new { co.ReturnRateReinvest, co.TradeDate }).ToList();
+                .Where(co => co.StockID.Equals(stockId, StringComparison.InvariantCultureIgnoreCase) && co.TradeStatus == 1 && co.TradeDate2 >= _startDate && co.TradeDate2 <= _endDate)
+                .Select(co => new { co.ReturnRateReinvest, date = co.TradeDate2, price = co.ClosePrice, highPirce = co.HighPrice, lowPrice = co.LowPrice })
+                .OrderByDescending(co => co.date).ToList();
 
-            var convertedDailyReturn = rawDailyReturn
-                .Select(co => new { co.ReturnRateReinvest, date = DateTime.Parse(co.TradeDate) })
-                .ToList();
+            //var convertedDailyReturn = rawDailyReturn
+            //    .Select(co => new { co.ReturnRateReinvest, date = DateTime.Parse(co.TradeDate) })
+            //    .ToList();
 
-            var timeConstrainedDailyReturn = convertedDailyReturn
-                .Where(co => co.date >= _startDate && co.date <= _endDate)
-                .OrderBy(co => co.date).ToList();
+            //var timeConstrainedDailyReturn = convertedDailyReturn
+            //    .Where(co => co.date >= _startDate && co.date <= _endDate)
+            //    .OrderBy(co => co.date).ToList();
 
             var rawDerivativeDaily = _astock.STK_MKT_DeriativeTradingIndexDaily
-                .Where(co => co.Symbol.Equals(stockId, StringComparison.InvariantCultureIgnoreCase))
-                .Select(co => new { co.TradingDate, co.CirculatedMarketValue, co.PE, co.Turnover, co.Liquidility }).ToList();
+                .Where(co => co.Symbol.Equals(stockId, StringComparison.InvariantCultureIgnoreCase) && co.TradingDate2 >= _startDate && co.TradingDate2 <= _endDate)
+                .Select(co => new { date = co.TradingDate2, co.CirculatedMarketValue, co.PE, co.Turnover, co.Liquidility })
+                .OrderByDescending(co => co.date).ToList();
 
-            var convertedDerivativeDaily = rawDerivativeDaily
-                .Select(co => new { co.CirculatedMarketValue, co.PE, co.Turnover, co.Liquidility, date = DateTime.Parse(co.TradingDate) }).ToList();
+            //var convertedDerivativeDaily = rawDerivativeDaily
+            //    .Select(co => new { co.CirculatedMarketValue, co.PE, co.Turnover, co.Liquidility, date = DateTime.Parse(co.TradingDate) }).ToList();
 
-            var timeConstrainedDerivativeDaily = convertedDerivativeDaily
-                .Where(co => co.date >= _startDate && co.date <= _endDate)
-                .OrderBy(co => co.date).ToList();
+            //var timeConstrainedDerivativeDaily = convertedDerivativeDaily
+            //    .Where(co => co.date >= _startDate && co.date <= _endDate)
+            //    .OrderBy(co => co.date).ToList();
             
             double excessive1 = 0;
             double excessive2 = 1;
@@ -604,21 +647,168 @@ namespace apm
             double turnover = 0;
             double circulateMarketValue = 0;
             double liquidity = 0;
+
+            DateTime? previousWeek = 
+                rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddDays(-7);
+            DateTime? previousMonth =
+                rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddMonths(-1);
+            DateTime? previousThreeMonth =
+                rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddMonths(-3);
+            DateTime? previousSixMonth =
+                rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddMonths(-6);
+            DateTime? previousYear =
+                rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddYears(-1);
+
+            // 1. Get the low/high/average price for the past week
+            var lowPriceList = 
+                previousWeek == null ? 
+                    null : 
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousWeek).Date)
+                        .OrderBy(a => a.lowPrice).ToList();
+
+            var highPriceList = 
+                previousWeek == null ?
+                    null : 
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousWeek).Date)
+                        .OrderByDescending(a => a.highPirce).ToList();
+
+            double? lowestPriceInOneWeek =
+                lowPriceList == null ?
+                    0 :
+                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+
+            double? highestPriceInOneWeek =
+                highPriceList == null ?
+                    0 :
+                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+
+            double? averagePriceInOneWeek = ( lowestPriceInOneWeek + highestPriceInOneWeek ) / 2;
+
+            // 2. Get the low/high/average price for the past month
+            lowPriceList =
+                previousMonth == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousMonth).Date)
+                        .OrderBy(a => a.lowPrice).ToList();
+
+            highPriceList =
+                previousMonth == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousMonth).Date)
+                        .OrderByDescending(a => a.highPirce).ToList();
+
+            double? lowestPriceInOneMonth =
+                lowPriceList == null ?
+                    0 :
+                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+
+            double? highestPriceInOneMonth =
+                highPriceList == null ?
+                    0 :
+                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+
+            double? averagePriceInOneMonth = ( lowestPriceInOneMonth + highestPriceInOneMonth ) /2 ;
+
+            // 3. Get low/high/average price for the past 3 months
+            lowPriceList =
+                previousThreeMonth == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousThreeMonth).Date)
+                        .OrderBy(a => a.lowPrice).ToList();
+
+            highPriceList =
+                previousThreeMonth == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousThreeMonth).Date)
+                        .OrderByDescending(a => a.highPirce).ToList();
+
+            double? lowestPriceInThreeMonth =
+                lowPriceList == null ?
+                    0 :
+                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice; 
+
+            double? highestPriceInThreeMonth =
+                highPriceList == null ?
+                    0 :
+                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+
+            double? averagePriceInThreeMonth = ( lowestPriceInThreeMonth + highestPriceInThreeMonth ) / 2;
+
+            // 4. Get the low/high/average price for the past 6 months
+            lowPriceList =
+                previousSixMonth == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousSixMonth).Date)
+                        .OrderBy(a => a.lowPrice).ToList();
+
+            highPriceList =
+                previousSixMonth == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousSixMonth).Date)
+                        .OrderByDescending(a => a.highPirce).ToList();
+
+            double? lowestPriceInSixMonth =
+                lowPriceList == null ?
+                    0 :
+                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+
+            double? highestPriceInSixMonth =
+                highPriceList == null ?
+                    0 :
+                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+            
+            double? averagePriceInSixMonth = ( lowestPriceInSixMonth + highestPriceInSixMonth ) / 2;
+
+            // 5. Get the low/high/average price for the past year
+            lowPriceList =
+                previousYear == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousYear).Date)
+                        .OrderBy(a => a.lowPrice).ToList();
+
+            highPriceList =
+                previousYear == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousYear).Date)
+                        .OrderByDescending(a => a.highPirce).ToList();
+
+            double? lowestPriceInOneYear =
+                lowPriceList == null ?
+                    0 :
+                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+
+            double? highestPriceInOneYear =
+                highPriceList == null ?
+                    0 :
+                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+
+            double? averagePriceInOneYear = ( lowestPriceInOneYear + highestPriceInOneYear ) / 2;
+
             var count = 0;
             var riskSampleCount = 0;
             
             List<double> residentialArray = new List<double>();
             List<double> returnArray = new List<double>();
 
-            foreach (var beta in timeConstrainedDailyBeta)
+            foreach (var beta in rawDailyBeta)
             {
                 double? market;
                 
                 if(_source.ToUpper().Equals("INDEX"))
                 {
                     var key = _isFilterByBoard ? 
-                        new Tuple<DateTime, string>(beta.date, BoardTypeToIndexMap[_boardType]) :
-                        new Tuple<DateTime, string>(beta.date, MarketTypeToIndexMap[marketType]);
+                        new Tuple<DateTime, string>((DateTime)beta.date, BoardTypeToIndexMap[_boardType]) :
+                        new Tuple<DateTime, string>((DateTime)beta.date, MarketTypeToIndexMap[marketType]);
 
                     if(!_mktIndex.ContainsKey(key))
                         continue;
@@ -627,10 +817,10 @@ namespace apm
                 }
                 else if(_source.ToUpper().Equals("CONSOLIDATED"))
                 {
-                    if (!_mktReturn.ContainsKey(beta.date))
+                    if (!_mktReturn.ContainsKey((DateTime)beta.date))
                         continue;
 
-                    market = _mktReturn[beta.date];
+                    market = _mktReturn[(DateTime)beta.date];
                 }
                 else
                 {
@@ -638,7 +828,7 @@ namespace apm
                         string.Format("Unrecognized return rate source <{0}>", _source.ToUpper()));
                 }
 
-                var stockReturn = timeConstrainedDailyReturn.Where(co => co.date == beta.date).FirstOrDefault();
+                var stockReturn = rawDailyReturn.Where(co => co.date == beta.date).FirstOrDefault();
                 
                 if(stockReturn != null)
                 {
@@ -661,7 +851,7 @@ namespace apm
             }
 
             int count2 = 0;
-            foreach(var de in timeConstrainedDerivativeDaily)
+            foreach(var de in rawDerivativeDaily)
             {
                 if (de.PE != null && de.Turnover != null && de.Liquidility != null && de.CirculatedMarketValue != null)
                 {
@@ -724,8 +914,17 @@ namespace apm
                 {
                     deviation += Math.Pow((t - excessive), 2);
                 }
-                excessiveRisk = Math.Sqrt(deviation / (riskSampleCount - 1));
-                excessiveSharpe = excessive / excessiveRisk;
+                if(deviation == 0)
+                {
+                    excessiveSharpe = double.MaxValue;
+                }
+                else
+                {
+                    excessiveRisk = riskSampleCount > 1 ? 
+                    Math.Sqrt(deviation / (riskSampleCount - 1)) :
+                    Math.Sqrt(deviation);
+                    excessiveSharpe = excessive / excessiveRisk;
+                }
             }
 
             if(premium != 0)
@@ -750,9 +949,17 @@ namespace apm
                     deviation += Math.Pow((r - premium), 2);
                 }
 
-                residentialRisk = Math.Sqrt(deviation / (riskSampleCount - 1));
-
-                residentialSharpe = premium / residentialRisk;
+                if (deviation == 0)
+                {
+                    residentialSharpe = double.MaxValue;
+                }
+                else
+                {
+                    residentialRisk = riskSampleCount > 1 ?
+                    Math.Sqrt(deviation / (riskSampleCount - 1)) :
+                    Math.Sqrt(deviation);
+                    residentialSharpe = premium / residentialRisk;
+                }
             }
 
             var index = new StockIndex
@@ -769,7 +976,13 @@ namespace apm
                 PriceEarningRate = pe,
                 Turnover = turnover,
                 CirculatedMarketValue = circulateMarketValue,
-                Liquidity = liquidity
+                Liquidity = liquidity,
+                LatestClosePrice = rawDailyReturn.Count == 0 ? 0 : (double)rawDailyReturn.ElementAt(0).price,
+                AveragePricePastWeek = averagePriceInOneWeek == null ? 0 : (double)averagePriceInOneWeek,
+                AveragePricePastMonth = averagePriceInOneMonth == null ? 0 : (double)averagePriceInOneMonth,
+                AveragePricePastThreeMonth = averagePriceInThreeMonth == null ? 0 : (double)averagePriceInThreeMonth,
+                AveragePricePastSixMonth = averagePriceInSixMonth == null ? 0 : (double)averagePriceInSixMonth,
+                AveragePricePastYear = averagePriceInOneYear == null ? 0 : (double)averagePriceInOneYear
             };
             
 
@@ -856,19 +1069,13 @@ namespace apm
                     _startDate.ToShortDateString(), _endDate.ToShortDateString()));
             }
             var rawDailyMktReturn = _astock.STK_MKT_ConsolidatedReturn
-                .Where(mkt => mkt.MarketType == _mktType)
-                .Select(co => new { co.TradeDate, Ret = co.CirculatedMarketCapitalWeightedReturnRateReinvest }).ToList();
+                .Where(mkt => mkt.MarketType == _mktType && mkt.TradeDate2 >= _startDate && mkt.TradeDate2 <= _endDate)
+                .Select(co => new { Date = co.TradeDate2, Ret = co.CirculatedMarketCapitalWeightedReturnRateReinvest }).ToList()
+                .OrderBy(co => co.Date);
 
-            var convertedDailyMktReturn = rawDailyMktReturn
-                .Select(co => new { co.Ret, date = DateTime.Parse(co.TradeDate) }).ToList();
-
-            var timeConstrainedDailyMktReturn = convertedDailyMktReturn
-                .Where(co => co.date >= _startDate && co.date <= _endDate)
-                .OrderBy(co => co.date).ToList();
-
-            foreach (var v in timeConstrainedDailyMktReturn)
+            foreach (var v in rawDailyMktReturn)
             {
-               _mktReturn.Add(v.date, v.Ret);
+               _mktReturn.Add((DateTime)v.Date, v.Ret);
             }
         }
 
@@ -881,21 +1088,22 @@ namespace apm
                     _startDate.ToShortDateString(), _endDate.ToShortDateString()));
             }
 
-            var rawMktIndexDaily = _astock.STK_MKT_IndexDaily
-                .Select(idx => new { Id = idx.IndexID, idx.TradingDate, Ret = idx.IndexReturnRate }).ToList();
+            var rawMktIndexDaily = _astock.STK_MKT_IndexDaily.Where(tmp => tmp.TradingDate2 >= _startDate && tmp.TradingDate2 <= _endDate)
+                .Select(idx => new { Id = idx.IndexID, Date = idx.TradingDate2, Ret = idx.IndexReturnRate }).ToList()
+                .OrderBy(idx => idx.Date);
 
-            var ConvertedIndexDaily = rawMktIndexDaily
-                .Select(idx => new { idx.Id, idx.Ret, Date = DateTime.Parse(idx.TradingDate) });
+            //var ConvertedIndexDaily = rawMktIndexDaily
+            //    .Select(idx => new { idx.Id, idx.Ret, Date = DateTime.Parse(idx.TradingDate) });
 
-            var timeConstrainedIndexDaily = ConvertedIndexDaily
-                .Where(idx => idx.Date >= _startDate && idx.Date <= _endDate)
-                .OrderBy(idx => idx.Date).ToList();
+            //var timeConstrainedIndexDaily = ConvertedIndexDaily
+            //    .Where(idx => idx.Date >= _startDate && idx.Date <= _endDate)
+            //    .OrderBy(idx => idx.Date).ToList();
 
-            foreach(var v in timeConstrainedIndexDaily)
+            foreach (var v in rawMktIndexDaily)
             {
                 //if(MarketIndexMap[_mktType].Any(a => a.Equals(v.Id, StringComparison.InvariantCultureIgnoreCase)))
                 //{
-                    _mktIndex.Add(new Tuple<DateTime, string>(v.Date, v.Id), v.Ret);
+                    _mktIndex.Add(new Tuple<DateTime, string>((DateTime)v.Date, v.Id), v.Ret);
                 //}
             }
         }

@@ -16,14 +16,10 @@ namespace StockDataModelEntities
     {
         public TRD_Co()
         {
-            this.TRD_Co_Quarter_PSIndex = new HashSet<TRD_Co_Quarter_PSIndex>();
-            this.TRD_Co_Quarter_RiskIndex = new HashSet<TRD_Co_Quarter_RiskIndex>();
-            this.TRD_Co_Quarter_DevIndex = new HashSet<TRD_Co_Quarter_DevIndex>();
-            this.TRD_Co_Quarter_ProfitIndex = new HashSet<TRD_Co_Quarter_ProfitIndex>();
             this.STK_MKT_DeriativeTradingIndexDaily = new HashSet<STK_MKT_DeriativeTradingIndexDaily>();
+            this.STK_MKT_PortfolioBase = new HashSet<STK_MKT_PortfolioBase>();
             this.STK_MKT_RiskFactorDaily = new HashSet<STK_MKT_RiskFactorDaily>();
             this.STK_MKT_TradeDaily = new HashSet<STK_MKT_TradeDaily>();
-            this.STK_MKT_PortfolioBase = new HashSet<STK_MKT_PortfolioBase>();
         }
     
         public Nullable<double> CoutryId { get; set; }
@@ -55,13 +51,9 @@ namespace StockDataModelEntities
         public string HStockInterchangeCode { get; set; }
         public Nullable<double> MarketType { get; set; }
     
-        public virtual ICollection<TRD_Co_Quarter_PSIndex> TRD_Co_Quarter_PSIndex { get; set; }
-        public virtual ICollection<TRD_Co_Quarter_RiskIndex> TRD_Co_Quarter_RiskIndex { get; set; }
-        public virtual ICollection<TRD_Co_Quarter_DevIndex> TRD_Co_Quarter_DevIndex { get; set; }
-        public virtual ICollection<TRD_Co_Quarter_ProfitIndex> TRD_Co_Quarter_ProfitIndex { get; set; }
         public virtual ICollection<STK_MKT_DeriativeTradingIndexDaily> STK_MKT_DeriativeTradingIndexDaily { get; set; }
+        public virtual ICollection<STK_MKT_PortfolioBase> STK_MKT_PortfolioBase { get; set; }
         public virtual ICollection<STK_MKT_RiskFactorDaily> STK_MKT_RiskFactorDaily { get; set; }
         public virtual ICollection<STK_MKT_TradeDaily> STK_MKT_TradeDaily { get; set; }
-        public virtual ICollection<STK_MKT_PortfolioBase> STK_MKT_PortfolioBase { get; set; }
     }
 }

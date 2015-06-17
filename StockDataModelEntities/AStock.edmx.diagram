@@ -4,27 +4,23 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b231719bd19e4528aaa199c546f46cce" Name="Diagram1" ZoomLevel="75">
-        <EntityTypeShape EntityType="astockModel.TRD_Co" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_PSIndex" Width="1.5" PointX="3" PointY="25.125" />
-        <AssociationConnector Association="astockModel.FK_TRD_Co_Per_Share_Index_TRD_Co1" />
-        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_RiskIndex" Width="1.5" PointX="3" PointY="13" />
-        <AssociationConnector Association="astockModel.FK_TRD_Co_Quarter_RiskIndex_TRD_Co" />
-        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_DevIndex" Width="1.5" PointX="3" PointY="38.25" />
-        <AssociationConnector Association="astockModel.FK_TRD_Co_Quarter_DevIndex_TRD_Co" />
-        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_ProfitIndex" Width="1.5" PointX="3" PointY="50.375" />
-        <AssociationConnector Association="astockModel.FK_TRD_Co_Quarter_ProfitIndex_TRD_Co" />
-        <EntityTypeShape EntityType="astockModel.STK_MKT_DeriativeTradingIndexDaily" Width="1.5" PointX="3" PointY="66.625" />
-        <EntityTypeShape EntityType="astockModel.STK_MKT_RiskFactorDaily" Width="1.5" PointX="3" PointY="16.625" />
-        <EntityTypeShape EntityType="astockModel.STK_MKT_ThreeFactorModelDaily" Width="1.5" PointX="7.375" PointY="0.75" />
-        <AssociationConnector Association="astockModel.FK_STK_MKT_Dalyr_TRD_Co1" />
-        <AssociationConnector Association="astockModel.FK_STK_MKT_Stkbtal_TRD_Co1" />
-        <EntityTypeShape EntityType="astockModel.STK_MKT_ConsolidatedReturn" Width="1.5" PointX="7.375" PointY="4.75" />
-        <EntityTypeShape EntityType="astockModel.STK_MKT_TradeDaily" Width="1.5" PointX="9.375" PointY="0.75" />
-        <AssociationConnector Association="astockModel.FK_STK_MKT_TradeDaily_TRD_Co" />
-        <EntityTypeShape EntityType="astockModel.STK_MKT_PortfolioBase" Width="1.5" PointX="3" PointY="2.75" />
-        <AssociationConnector Association="astockModel.FK_STK_MKT_PortfolioBase_TRD_Co" />
-        <EntityTypeShape EntityType="astockModel.STK_MKT_IndexDaily" Width="1.5" PointX="3.375" PointY="7.75" />
+      <Diagram DiagramId="fd27167c14a84ee080ba8e9cc6f51227" Name="Diagram1">
+        <EntityTypeShape EntityType="astockModel.STK_MKT_ConsolidatedReturn" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="astockModel.STK_MKT_DeriativeTradingIndexDaily" Width="1.5" PointX="3" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="astockModel.STK_MKT_IndexDaily" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="astockModel.STK_MKT_PortfolioBase" Width="1.5" PointX="3" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="astockModel.STK_MKT_RiskFactorDaily" Width="1.5" PointX="3" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="astockModel.STK_MKT_TradeDaily" Width="1.5" PointX="3" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="astockModel.TRD_Co" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
+        <AssociationConnector Association="astockModel.FK_STK_MKT_DeriativeTradingIndexDaily_TRD_Co" ManuallyRouted="false" />
+        <AssociationConnector Association="astockModel.FK_STK_MKT_PortfolioBase_TRD_Co" ManuallyRouted="false" />
+        <AssociationConnector Association="astockModel.FK_STK_MKT_RiskFactorDaily_TRD_Co" ManuallyRouted="false" />
+        <AssociationConnector Association="astockModel.FK_STK_MKT_TradeDaily_TRD_Co" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="astockModel.STK_MKT_ThreeFactorModelDaily" Width="1.5" PointX="8.375" PointY="0.75" />
+        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_DevIndex" Width="1.5" PointX="8.375" PointY="4.75" />
+        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_ProfitIndex" Width="1.5" PointX="5.375" PointY="9.75" />
+        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_PSIndex" Width="1.5" PointX="10.375" PointY="0.75" />
+        <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_RiskIndex" Width="1.5" PointX="12.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

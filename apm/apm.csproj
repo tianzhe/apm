@@ -65,15 +65,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StockDataModelEntities\StockDataModelEntities.csproj">
-      <Project>{85e879bb-ab6e-4cef-af86-b27d0717ad59}</Project>
-      <Name>StockDataModelEntities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="log4net.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StockDataModelEntities\StockDataModelEntities.csproj">
+      <Project>{c0ec0882-c8c0-42b2-9e1a-2e18b85b7335}</Project>
+      <Name>StockDataModelEntities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

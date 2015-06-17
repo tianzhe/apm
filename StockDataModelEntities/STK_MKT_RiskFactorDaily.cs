@@ -30,6 +30,7 @@ namespace StockDataModelEntities
         public Nullable<double> ARsq1 { get; set; }
         public Nullable<double> ARsq2 { get; set; }
         public System.Guid UniqueID { get; set; }
+        public Nullable<System.DateTime> TradingDate2 { get; set; }
     
         public virtual TRD_Co TRD_Co { get; set; }
     }

@@ -24,5 +24,6 @@ namespace StockDataModelEntities
         public Nullable<double> ConstituentStockTradeAmount { get; set; }
         public Nullable<double> IndexReturnRate { get; set; }
         public System.Guid UniqueID { get; set; }
+        public Nullable<System.DateTime> TradingDate2 { get; set; }
     }
 }

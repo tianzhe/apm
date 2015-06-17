@@ -25,17 +25,17 @@ namespace StockDataModelEntities
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<STK_MKT_ConsolidatedReturn> STK_MKT_ConsolidatedReturn { get; set; }
+        public virtual DbSet<STK_MKT_DeriativeTradingIndexDaily> STK_MKT_DeriativeTradingIndexDaily { get; set; }
+        public virtual DbSet<STK_MKT_IndexDaily> STK_MKT_IndexDaily { get; set; }
+        public virtual DbSet<STK_MKT_PortfolioBase> STK_MKT_PortfolioBase { get; set; }
+        public virtual DbSet<STK_MKT_RiskFactorDaily> STK_MKT_RiskFactorDaily { get; set; }
+        public virtual DbSet<STK_MKT_TradeDaily> STK_MKT_TradeDaily { get; set; }
         public virtual DbSet<TRD_Co> TRD_Co { get; set; }
-        public virtual DbSet<TRD_Co_Quarter_PSIndex> TRD_Co_Quarter_PSIndex { get; set; }
-        public virtual DbSet<TRD_Co_Quarter_RiskIndex> TRD_Co_Quarter_RiskIndex { get; set; }
+        public virtual DbSet<STK_MKT_ThreeFactorModelDaily> STK_MKT_ThreeFactorModelDaily { get; set; }
         public virtual DbSet<TRD_Co_Quarter_DevIndex> TRD_Co_Quarter_DevIndex { get; set; }
         public virtual DbSet<TRD_Co_Quarter_ProfitIndex> TRD_Co_Quarter_ProfitIndex { get; set; }
-        public virtual DbSet<STK_MKT_DeriativeTradingIndexDaily> STK_MKT_DeriativeTradingIndexDaily { get; set; }
-        public virtual DbSet<STK_MKT_RiskFactorDaily> STK_MKT_RiskFactorDaily { get; set; }
-        public virtual DbSet<STK_MKT_ThreeFactorModelDaily> STK_MKT_ThreeFactorModelDaily { get; set; }
-        public virtual DbSet<STK_MKT_ConsolidatedReturn> STK_MKT_ConsolidatedReturn { get; set; }
-        public virtual DbSet<STK_MKT_TradeDaily> STK_MKT_TradeDaily { get; set; }
-        public virtual DbSet<STK_MKT_PortfolioBase> STK_MKT_PortfolioBase { get; set; }
-        public virtual DbSet<STK_MKT_IndexDaily> STK_MKT_IndexDaily { get; set; }
+        public virtual DbSet<TRD_Co_Quarter_PSIndex> TRD_Co_Quarter_PSIndex { get; set; }
+        public virtual DbSet<TRD_Co_Quarter_RiskIndex> TRD_Co_Quarter_RiskIndex { get; set; }
     }
 }

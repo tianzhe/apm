@@ -26,5 +26,6 @@ namespace StockDataModelEntities
         public Nullable<double> TotalMarketCapitalWeightedReturnRateNonReinvest { get; set; }
         public Nullable<double> NumOfCompaniesInCal { get; set; }
         public System.Guid UniqueID { get; set; }
+        public Nullable<System.DateTime> TradeDate2 { get; set; }
     }
 }

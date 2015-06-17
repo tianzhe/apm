@@ -22,7 +22,5 @@ namespace StockDataModelEntities
         public Nullable<double> DegreeOperatingLeverage { get; set; }
         public Nullable<double> DegreeTotalLeverage { get; set; }
         public System.Guid UniqueID { get; set; }
-    
-        public virtual TRD_Co TRD_Co { get; set; }
     }
 }

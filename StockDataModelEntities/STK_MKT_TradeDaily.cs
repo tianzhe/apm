@@ -32,6 +32,7 @@ namespace StockDataModelEntities
         public string LatestCapitalChangeDate { get; set; }
         public Nullable<double> TradeStatus { get; set; }
         public System.Guid UniqueID { get; set; }
+        public Nullable<System.DateTime> TradeDate2 { get; set; }
     
         public virtual TRD_Co TRD_Co { get; set; }
     }
