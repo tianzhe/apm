@@ -28,6 +28,14 @@ namespace StockDataModelEntities
         public string DeterminationAlgorithm { get; set; }
         public string AverageAlgorithm { get; set; }
         public System.Guid UniqueId { get; set; }
+        public Nullable<double> AverageVolatilityToDate { get; set; }
+        public Nullable<double> AverageNonSysRiskToDate { get; set; }
+        public Nullable<double> AveragePriceInPastWeek { get; set; }
+        public Nullable<double> AveragePriceInPastMonth { get; set; }
+        public Nullable<double> AveragePriceInPastTwoMonth { get; set; }
+        public Nullable<double> AveragePriceInPastThreeMonth { get; set; }
+        public Nullable<double> AveragePriceInPastSixMonth { get; set; }
+        public Nullable<double> AveragePriceInPastYear { get; set; }
     
         public virtual TRD_Co TRD_Co { get; set; }
     }

@@ -37,5 +37,7 @@ namespace StockDataModelEntities
         public virtual DbSet<TRD_Co_Quarter_ProfitIndex> TRD_Co_Quarter_ProfitIndex { get; set; }
         public virtual DbSet<TRD_Co_Quarter_PSIndex> TRD_Co_Quarter_PSIndex { get; set; }
         public virtual DbSet<TRD_Co_Quarter_RiskIndex> TRD_Co_Quarter_RiskIndex { get; set; }
+        public virtual DbSet<STK_MKT_SectorDaily> STK_MKT_SectorDaily { get; set; }
+        public virtual DbSet<TRD_Sector> TRD_Sector { get; set; }
     }
 }

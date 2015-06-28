@@ -17,6 +17,7 @@ namespace apm
         private Dictionary<string, List<StockIndex>> pivot = new Dictionary<string, List<StockIndex>>();
         private Dictionary<DateTime, double?> _mktReturn = new Dictionary<DateTime,double?>();
         private Dictionary<Tuple<DateTime, string>, double?> _mktIndex = new Dictionary<Tuple<DateTime, string>, double?>();
+        private Dictionary<Tuple<DateTime, string>, double?> _mktSector = new Dictionary<Tuple<DateTime, string>, double?>();
         private astockEntities _astock = new astockEntities();
         private int _mktType = 0;
         private DateTime _startDate = DateTime.Now;
@@ -99,7 +100,7 @@ namespace apm
             Initialise();
         }
 
-        public Portfolio Generate()
+        override public Portfolio Generate()
         {
             SortStockOfSameIndustry(_industry, _mktType);
 
@@ -135,6 +136,10 @@ namespace apm
                         .Where(firm => firm.StockId.Equals(v.StockId, StringComparison.InvariantCultureIgnoreCase))
                         .FirstOrDefault();
 
+                    var sector = _astock.TRD_Sector
+                        .Where(a => a.SectorTypeId.Equals(company.SectorTypeId, StringComparison.InvariantCultureIgnoreCase))
+                        .FirstOrDefault();
+
                     var profit = _astock.TRD_Co_Quarter_ProfitIndex
                         .Where(tmp => tmp.StockID.Equals(company.StockId, StringComparison.InvariantCultureIgnoreCase))
                         .OrderByDescending(tmp => tmp.DateAsOfReporting2).ToList();
@@ -144,6 +149,7 @@ namespace apm
                         IndustryTopLevel = company.IndustryNameA,
                         Industry2ndLevel = company.IndustryNameB,
                         Industry3rdLevel = company.IndustryNameC,
+                        IndustrySector = sector.SectorTypeName,
                         FirmFullName = company.CompanyNameCN,
                         FirmShortName = company.StockName,
                         StockID = company.StockId,
@@ -154,8 +160,11 @@ namespace apm
                         PriceEarningRate = v.PriceEarningRate,
                         LatestLongTermROE = profit.Count == 0 ? 0 : (double)profit.ElementAt(0).LongTermROE,
                         LatestClosePrice = v.LatestClosePrice,
+                        Volatility = v.Volatility,
+                        NonSystemRisk = v.CirculatedMarketValueWeightedNonSysRisk,
                         AveragePriceInPastWeek = v.AveragePricePastWeek,
                         AveragePriceInPastMonth = v.AveragePricePastMonth,
+                        AveragePriceInPastTwoMonth = v.AveragePricePastTwoMonth,
                         AveragePriceInPastThreeMonth = v.AveragePricePastThreeMonth,
                         AveragePriceInPastSixMonth = v.AveragePricePastSixMonth,
                         AveragePriceInPastYear = v.AveragePricePastYear
@@ -178,6 +187,14 @@ namespace apm
                         DeterminationAlgorithm = _pfAlgo,
                         AverageAlgorithm = _avAlgo,
                         UniqueId = Guid.NewGuid(),
+                        AverageNonSysRiskToDate = v.CirculatedMarketValueWeightedNonSysRisk,
+                        AverageVolatilityToDate = v.Volatility,
+                        AveragePriceInPastWeek = v.AveragePricePastWeek,
+                        AveragePriceInPastMonth = v.AveragePricePastMonth,
+                        AveragePriceInPastTwoMonth = v.AveragePricePastTwoMonth,
+                        AveragePriceInPastThreeMonth = v.AveragePricePastThreeMonth,
+                        AveragePriceInPastSixMonth = v.AveragePricePastSixMonth,
+                        AveragePriceInPastYear = v.AveragePricePastYear,
                         TRD_Co = company
                     };
 
@@ -271,12 +288,13 @@ namespace apm
                 {
                     foreach (var dic in p.collection.OrderByDescending(c => c.Determination).OrderBy(c => c.IndustryTopLevel))
                     {
-                        writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6:F}%,{7:F},{8}%,{9:F},{10:F},{11:F}%,{12},{13:F},{14:F},{15:F},{16:F},{17:F}",
-                            dic.IndustryTopLevel, dic.Industry2ndLevel, dic.Industry3rdLevel, 
+                        writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6:F}%,{7:F},{8}%,{9:F},{10:F},{11:F}%,{12},{13:F}%,{14:F}%,{15:F},{16:F},{17:F},{18:F},{19:F},{20:F}",
+                            dic.IndustryTopLevel, dic.Industry3rdLevel, dic.IndustrySector,
                             dic.StockID, dic.FirmShortName, dic.FirmFullName, 
                             dic.Determination, dic.CirculatedMarketValue / 1000000, dic.Turnover, 
                             dic.Liquidity * 100, dic.PriceEarningRate, dic.LatestLongTermROE * 100, 
-                            dic.LatestClosePrice, dic.AveragePriceInPastWeek, dic.AveragePriceInPastMonth, 
+                            dic.LatestClosePrice, dic.Volatility, dic.NonSystemRisk,
+                            dic.AveragePriceInPastWeek, dic.AveragePriceInPastMonth, dic.AveragePriceInPastTwoMonth, 
                             dic.AveragePriceInPastThreeMonth, dic.AveragePriceInPastSixMonth, dic.AveragePriceInPastYear));
                     }
 
@@ -340,58 +358,10 @@ namespace apm
                             if (pivot.ContainsKey(co.IndustryCodeA))
                             {
                                 pivot[co.IndustryCodeA].Add(result);
-                                //switch(_pfAlgo)
-                                //{
-                                //    case "ResidentialSharpeOptimal":
-
-                                //        if (result.ResidentialSharpeRatio > pivot[co.IndustryCodeA].ResidentialSharpeRatio)
-                                //        {
-                                //            pivot[co.IndustryCodeA] = result;
-                                //            output[co.IndustryCodeA] = co.StockId;
-                                //        }
-                                       
-                                //        break;
-
-                                //    case "ExcessiveSharpeOptimal":
-
-                                //        if (result.ExcessiveSharpeRatio > pivot[co.IndustryCodeA].ExcessiveSharpeRatio)
-                                //        {
-                                //            pivot[co.IndustryCodeA] = result;
-                                //            output[co.IndustryCodeA] = co.StockId;
-                                //        }
-
-                                //        break;
-
-                                //    case "ExcessiveReturnOptimal":
-
-                                //        if (result.ExcessiveReturn2 > pivot[co.IndustryCodeA].ExcessiveReturn2)
-                                //        {
-                                //            pivot[co.IndustryCodeA] = result;
-                                //            output[co.IndustryCodeA] = co.StockId;
-                                //        }
-                                        
-                                //        break;
-
-                                //    case "ResidentialReturnOptimal":
-
-                                //        if (result.ResidentialReturn2 > pivot[co.IndustryCodeA].ResidentialReturn2)
-                                //        {
-                                //            pivot[co.IndustryCodeA] = result;
-                                //            output[co.IndustryCodeA] = co.StockId;
-                                //        }
-                                        
-                                //        break;
-                                //    default:
-
-                                //        throw new ApplicationException(
-                                //            string.Format("Unrecognized optimization algothrim {1}", _pfAlgo));
-                                //}
                             }
                             else
                             {
                                 pivot.Add(co.IndustryCodeA, new List<StockIndex>() { result });
-                                //output.Add(co.IndustryCodeA, co.StockId);
-                                //pivot.Add(co.IndustryCodeA, result);
                             }
                         }
                     }
@@ -408,57 +378,10 @@ namespace apm
                             if (pivot.ContainsKey(co.IndustryCodeB))
                             {
                                 pivot[co.IndustryCodeB].Add(result);
-                                //switch (_pfAlgo)
-                                //{
-                                //    case "ResidentialSharpeOptimal":
-
-                                //        if (result.ResidentialSharpeRatio > pivot[co.IndustryCodeB].ResidentialSharpeRatio)
-                                //        {
-                                //            pivot[co.IndustryCodeB] = result;
-                                //            output[co.IndustryCodeB] = co.StockId;
-                                //        }
-
-                                //        break;
-
-                                //    case "ExcessiveSharpeOptimal":
-
-                                //        if (result.ExcessiveSharpeRatio > pivot[co.IndustryCodeB].ExcessiveSharpeRatio)
-                                //        {
-                                //            pivot[co.IndustryCodeB] = result;
-                                //            output[co.IndustryCodeB] = co.StockId;
-                                //        }
-                                //        break;
-
-                                //    case "ExcessiveReturnOptimal":
-
-                                //        if (result.ExcessiveReturn2 > pivot[co.IndustryCodeB].ExcessiveReturn2)
-                                //        {
-                                //            pivot[co.IndustryCodeB] = result;
-                                //            output[co.IndustryCodeB] = co.StockId;
-                                //        }
-
-                                //        break;
-
-                                //    case "ResidentialReturnOptimal":
-
-                                //        if (result.ResidentialReturn2 > pivot[co.IndustryCodeB].ResidentialReturn2)
-                                //        {
-                                //            pivot[co.IndustryCodeB] = result;
-                                //            output[co.IndustryCodeB] = co.StockId;
-                                //        }
-
-                                //        break;
-                                //    default:
-
-                                //        throw new ApplicationException(
-                                //            string.Format("Unrecognized optimization algothrim {1}", _pfAlgo));
-                                //}
                             }
                             else
                             {
                                 pivot.Add(co.IndustryCodeB, new List<StockIndex>() { result });
-                                //output.Add(co.IndustryCodeB, co.StockId);
-                                //pivot.Add(co.IndustryCodeB, result);
                             }
                         }
                     }
@@ -475,57 +398,30 @@ namespace apm
                             if (pivot.ContainsKey(co.IndustryCodeC))
                             {
                                 pivot[co.IndustryCodeC].Add(result);
-                                //switch (_pfAlgo)
-                                //{
-                                //    case "ResidentialSharpeOptimal":
-
-                                //        if (result.ResidentialSharpeRatio > pivot[co.IndustryCodeC].ResidentialSharpeRatio)
-                                //        {
-                                //            pivot[co.IndustryCodeC] = result;
-                                //            output[co.IndustryCodeC] = co.StockId;
-                                //        }
-
-                                //        break;
-
-                                //    case "ExcessiveSharpeOptimal":
-
-                                //        if (result.ExcessiveSharpeRatio > pivot[co.IndustryCodeC].ExcessiveSharpeRatio)
-                                //        {
-                                //            pivot[co.IndustryCodeC] = result;
-                                //            output[co.IndustryCodeC] = co.StockId;
-                                //        }
-                                //        break;
-
-                                //    case "ExcessiveReturnOptimal":
-
-                                //        if (result.ExcessiveReturn2 > pivot[co.IndustryCodeC].ExcessiveReturn2)
-                                //        {
-                                //            pivot[co.IndustryCodeC] = result;
-                                //            output[co.IndustryCodeC] = co.StockId;
-                                //        }
-
-                                //        break;
-
-                                //    case "ResidentialReturnOptimal":
-
-                                //        if (result.ResidentialReturn2 > pivot[co.IndustryCodeC].ResidentialReturn2)
-                                //        {
-                                //            pivot[co.IndustryCodeC] = result;
-                                //            output[co.IndustryCodeC] = co.StockId;
-                                //        }
-
-                                //        break;
-                                //    default:
-
-                                //        throw new ApplicationException(
-                                //            string.Format("Unrecognized optimization algothrim {1}", _pfAlgo));
-                                //}
                             }
                             else
                             {
                                 pivot.Add(co.IndustryCodeC, new List<StockIndex>() { result });
-                                //output.Add(co.IndustryCodeC, co.StockId);
-                                //pivot.Add(co.IndustryCodeC, result);
+                            }
+                        }
+                    }
+                    break;
+
+                case "IndustrySector":
+
+                    foreach (var co in _astock.TRD_Co.Where(c => !string.IsNullOrEmpty(c.SectorTypeId)).ToList())
+                    {
+                        if (MarketTypeMap[mktType].Any(c => c == co.MarketType)
+                            && startWith.Any(c => co.StockId.StartsWith(c, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            StockIndex result = CalculatePremiumReturn(co.StockId, (double)co.MarketType);
+                            if (pivot.ContainsKey(co.SectorTypeId))
+                            {
+                                pivot[co.SectorTypeId].Add(result);
+                            }
+                            else
+                            {
+                                pivot.Add(co.SectorTypeId, new List<StockIndex>() { result });
                             }
                         }
                     }
@@ -597,7 +493,7 @@ namespace apm
         {
             var rawDailyBeta = _astock.STK_MKT_RiskFactorDaily
                 .Where(co => co.Symbol.Equals(stockId, StringComparison.InvariantCultureIgnoreCase) && co.TradingDate2 >= _startDate && co.TradingDate2 <= _endDate)
-                .Select(co => new{ co.Beta1, date = co.TradingDate2 })
+                .Select(co => new{ co.Beta1, co.SectorBeta1, date = co.TradingDate2, co.NonSysRisk1, co.Volatility })
                 .OrderByDescending(co => co.date).ToList();
 
             //var convertedDailyBeta = rawDailyBeta.
@@ -647,11 +543,15 @@ namespace apm
             double turnover = 0;
             double circulateMarketValue = 0;
             double liquidity = 0;
+            double volatility = 0;
+            double nonSysRisk = 0;
 
             DateTime? previousWeek = 
                 rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddDays(-7);
             DateTime? previousMonth =
                 rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddMonths(-1);
+            DateTime? previousTwoMonth =
+                rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddMonths(-2);
             DateTime? previousThreeMonth =
                 rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddMonths(-3);
             DateTime? previousSixMonth =
@@ -660,139 +560,106 @@ namespace apm
                 rawDailyReturn.Count == 0 ? (DateTime?)null : ((DateTime)rawDailyReturn.ElementAt(0).date).AddYears(-1);
 
             // 1. Get the low/high/average price for the past week
-            var lowPriceList = 
-                previousWeek == null ? 
-                    null : 
-                    rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousWeek).Date)
-                        .OrderBy(a => a.lowPrice).ToList();
-
-            var highPriceList = 
+            var priceListInOneWeek =
                 previousWeek == null ?
-                    null : 
+                    null :
                     rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousWeek).Date)
-                        .OrderByDescending(a => a.highPirce).ToList();
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousWeek).Date).ToList();
 
             double? lowestPriceInOneWeek =
-                lowPriceList == null ?
-                    0 :
-                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+                priceListInOneWeek == null ? 
+                    0 : priceListInOneWeek.Min(a => a.lowPrice);
 
-            double? highestPriceInOneWeek =
-                highPriceList == null ?
-                    0 :
-                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+            double? highestPriceInOneWeek = 
+                previousWeek == null ?
+                    0 : priceListInOneWeek.Max(a => a.highPirce);
 
             double? averagePriceInOneWeek = ( lowestPriceInOneWeek + highestPriceInOneWeek ) / 2;
 
             // 2. Get the low/high/average price for the past month
-            lowPriceList =
+            var priceListInOneMonth =
                 previousMonth == null ?
                     null :
                     rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousMonth).Date)
-                        .OrderBy(a => a.lowPrice).ToList();
-
-            highPriceList =
-                previousMonth == null ?
-                    null :
-                    rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousMonth).Date)
-                        .OrderByDescending(a => a.highPirce).ToList();
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousMonth).Date).ToList();
 
             double? lowestPriceInOneMonth =
-                lowPriceList == null ?
-                    0 :
-                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+                priceListInOneMonth == null ?
+                    0 : priceListInOneMonth.Min(a => a.lowPrice);
 
             double? highestPriceInOneMonth =
-                highPriceList == null ?
-                    0 :
-                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+                priceListInOneMonth == null ?
+                    0 : priceListInOneMonth.Max(a => a.highPirce);
 
-            double? averagePriceInOneMonth = ( lowestPriceInOneMonth + highestPriceInOneMonth ) /2 ;
+            double? averagePriceInOneMonth = (lowestPriceInOneMonth + highestPriceInOneMonth) / 2;
 
-            // 3. Get low/high/average price for the past 3 months
-            lowPriceList =
+            // 3. Get the low/high price for the past 2 months
+            var priceListInTwoMonth =
+                previousTwoMonth == null ?
+                    null :
+                    rawDailyReturn
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousTwoMonth).Date).ToList();
+
+            double? lowestPriceInTwoMonth =
+                priceListInTwoMonth == null ?
+                    0 : priceListInTwoMonth.Min(a => a.lowPrice);
+
+            double? highestPriceInTwoMonth =
+                priceListInTwoMonth == null ?
+                    0 : priceListInTwoMonth.Max(a => a.highPirce);
+
+            double? averagePriceInTwoMonth = (lowestPriceInTwoMonth + lowestPriceInTwoMonth) / 2;
+
+            // 4. Get the low/high/average price for the past 3W months
+            var priceListInThreeMonth =
                 previousThreeMonth == null ?
                     null :
                     rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousThreeMonth).Date)
-                        .OrderBy(a => a.lowPrice).ToList();
-
-            highPriceList =
-                previousThreeMonth == null ?
-                    null :
-                    rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousThreeMonth).Date)
-                        .OrderByDescending(a => a.highPirce).ToList();
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousThreeMonth).Date).ToList();
 
             double? lowestPriceInThreeMonth =
-                lowPriceList == null ?
-                    0 :
-                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice; 
+                priceListInThreeMonth == null ?
+                    0 : priceListInThreeMonth.Min(a => a.lowPrice);
 
             double? highestPriceInThreeMonth =
-                highPriceList == null ?
-                    0 :
-                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+                priceListInThreeMonth == null ?
+                    0 : priceListInThreeMonth.Max(a => a.highPirce);
 
-            double? averagePriceInThreeMonth = ( lowestPriceInThreeMonth + highestPriceInThreeMonth ) / 2;
+            double? averagePriceInThreeMonth = (lowestPriceInThreeMonth + highestPriceInThreeMonth) / 2;
 
-            // 4. Get the low/high/average price for the past 6 months
-            lowPriceList =
+            // 5. Get the low/high/average price for the past 6 months
+            var priceListInSixMonth =
                 previousSixMonth == null ?
                     null :
                     rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousSixMonth).Date)
-                        .OrderBy(a => a.lowPrice).ToList();
-
-            highPriceList =
-                previousSixMonth == null ?
-                    null :
-                    rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousSixMonth).Date)
-                        .OrderByDescending(a => a.highPirce).ToList();
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousSixMonth).Date).ToList();
 
             double? lowestPriceInSixMonth =
-                lowPriceList == null ?
-                    0 :
-                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+                priceListInSixMonth == null ?
+                    0 : priceListInSixMonth.Min(a => a.lowPrice);
 
             double? highestPriceInSixMonth =
-                highPriceList == null ?
-                    0 :
-                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
-            
-            double? averagePriceInSixMonth = ( lowestPriceInSixMonth + highestPriceInSixMonth ) / 2;
+                priceListInSixMonth == null ?
+                    0 : priceListInSixMonth.Max(a => a.highPirce);
 
-            // 5. Get the low/high/average price for the past year
-            lowPriceList =
+            double? averagePriceInSixMonth = (lowestPriceInSixMonth + highestPriceInSixMonth) / 2;
+
+            // 6. Get the low/high/average price for the past year
+            var priceListInOneYear =
                 previousYear == null ?
                     null :
                     rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousYear).Date)
-                        .OrderBy(a => a.lowPrice).ToList();
-
-            highPriceList =
-                previousYear == null ?
-                    null :
-                    rawDailyReturn
-                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousYear).Date)
-                        .OrderByDescending(a => a.highPirce).ToList();
+                        .Where(a => ((DateTime)a.date).Date >= ((DateTime)previousYear).Date).ToList();
 
             double? lowestPriceInOneYear =
-                lowPriceList == null ?
-                    0 :
-                    lowPriceList.Count == 0 ? 0 : lowPriceList.ElementAt(0).lowPrice;
+                priceListInOneYear == null ?
+                    0 : priceListInOneYear.Min(a => a.lowPrice);
 
             double? highestPriceInOneYear =
-                highPriceList == null ?
-                    0 :
-                    highPriceList.Count == 0 ? 0 : highPriceList.ElementAt(0).highPirce;
+                priceListInOneYear == null ?
+                    0 : priceListInOneYear.Max(a => a.highPirce);
 
-            double? averagePriceInOneYear = ( lowestPriceInOneYear + highestPriceInOneYear ) / 2;
+            double? averagePriceInOneYear = (lowestPriceInOneYear + highestPriceInOneYear) / 2;
 
             var count = 0;
             var riskSampleCount = 0;
@@ -803,7 +670,7 @@ namespace apm
             foreach (var beta in rawDailyBeta)
             {
                 double? market;
-                
+
                 if(_source.ToUpper().Equals("INDEX"))
                 {
                     var key = _isFilterByBoard ? 
@@ -822,6 +689,28 @@ namespace apm
 
                     market = _mktReturn[(DateTime)beta.date];
                 }
+                else if(_source.ToUpper().Equals("SECTOR"))
+                {
+                    var stock = 
+                        _astock.TRD_Co
+                        .Where(a => a.StockId.Equals(stockId, StringComparison.InvariantCultureIgnoreCase))
+                        .FirstOrDefault();
+
+                    if(stock != null && !string.IsNullOrEmpty(stock.SectorTypeId))
+                    {
+                        var sector = stock.SectorTypeId;
+                        var key = new Tuple<DateTime, string>((DateTime)beta.date, sector);
+                        if(!_mktSector.ContainsKey(key))
+                        {
+                            continue;
+                        }
+                        market = _mktSector[key];
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
                 else
                 {
                     throw new ApplicationException(
@@ -832,11 +721,12 @@ namespace apm
                 
                 if(stockReturn != null)
                 {
-                    if(stockReturn.ReturnRateReinvest != null && beta.Beta1 != null & market != null)
+                    var betaCor = _source.ToUpper().Equals("SECTOR") ? beta.SectorBeta1 : beta.Beta1;
+                    if(stockReturn.ReturnRateReinvest != null && betaCor != null & market != null)
                     {
                         excessive1 += (double)stockReturn.ReturnRateReinvest;
                         excessive2 = excessive2 * (1 + (double)stockReturn.ReturnRateReinvest);
-                        residential = (double)stockReturn.ReturnRateReinvest - (double)beta.Beta1 * (double)market;
+                        residential = (double)stockReturn.ReturnRateReinvest - (double)betaCor * (double)market;
                         residentialArray.Add(residential);
                         returnArray.Add((double)stockReturn.ReturnRateReinvest);
                         premium1 += residential;
@@ -850,28 +740,56 @@ namespace apm
                 }
             }
 
-            int count2 = 0;
-            foreach(var de in rawDerivativeDaily)
-            {
-                if (de.PE != null && de.Turnover != null && de.Liquidility != null && de.CirculatedMarketValue != null)
-                {
-                    pe += (double)de.PE;
-                    turnover += (double)de.Turnover;
-                    liquidity += (double)de.Liquidility;
-                    circulateMarketValue += (double)de.CirculatedMarketValue;
+            /* Instead of getting the average, the latest PE/Turnover/Liquidity/CirculatedMarketValue
+             * might more meaningful
+             */
 
-                    ++count2;
-                }
-            }
+
+            //int count2 = 0;
+            //foreach(var de in rawDerivativeDaily)
+            //{
+            //    if (de.PE != null && de.Turnover != null && de.Liquidility != null && de.CirculatedMarketValue != null)
+            //    {
+            //        pe += (double)de.PE;
+            //        turnover += (double)de.Turnover;
+            //        liquidity += (double)de.Liquidility;
+            //        circulateMarketValue += (double)de.CirculatedMarketValue;
+
+            //        ++count2;
+            //    }
+            //}
 
             excessive1 = count == 0 ? 0 : excessive1 / count;
             excessive2 = count == 0 ? 0 : /*(excessive2 - 1) / count;*/Math.Pow(excessive2, 1d / count) - 1;
             premium1 = count == 0 ? 0 : premium1 / count;
             premium2 = count == 0 ? 0 : /*(premium2 - 1) / count*/Math.Pow(premium2, 1d / count) - 1;
-            pe = count2 == 0 ? 0 : pe / count2;
-            turnover = count2 == 0 ? 0 : turnover / count2;
-            circulateMarketValue = count2 == 0 ? 0 : circulateMarketValue / count2;
-            liquidity = count2 == 0 ? 0 : liquidity / count2;
+
+            //pe = count2 == 0 ? 0 : pe / count2;
+            //turnover = count2 == 0 ? 0 : turnover / count2;
+            //circulateMarketValue = count2 == 0 ? 0 : circulateMarketValue / count2;
+            //liquidity = count2 == 0 ? 0 : liquidity / count2;
+
+            if(rawDerivativeDaily != null && rawDerivativeDaily.Count > 0)
+            {
+                pe = 
+                    rawDerivativeDaily.ElementAt(0).PE == null ? 
+                    0 : (double)rawDerivativeDaily.ElementAt(0).PE;
+                turnover = 
+                    rawDerivativeDaily.ElementAt(0).Turnover == null ? 
+                    0 : (double)rawDerivativeDaily.ElementAt(0).Turnover;
+                circulateMarketValue = 
+                    rawDerivativeDaily.ElementAt(0).CirculatedMarketValue == null ? 
+                    0 : (double)rawDerivativeDaily.ElementAt(0).CirculatedMarketValue;
+                liquidity =
+                    rawDerivativeDaily.ElementAt(0).Liquidility == null ?
+                    0 : (double)rawDerivativeDaily.ElementAt(0).Liquidility;
+            }
+
+            if(rawDailyBeta != null && rawDailyBeta.Count > 0)
+            {
+                nonSysRisk = (double)rawDailyBeta.Average(a => a.NonSysRisk1);
+                volatility = (double)rawDailyBeta.Average(a => a.Volatility);
+            }
             
             switch(_avAlgo)
             {
@@ -980,9 +898,12 @@ namespace apm
                 LatestClosePrice = rawDailyReturn.Count == 0 ? 0 : (double)rawDailyReturn.ElementAt(0).price,
                 AveragePricePastWeek = averagePriceInOneWeek == null ? 0 : (double)averagePriceInOneWeek,
                 AveragePricePastMonth = averagePriceInOneMonth == null ? 0 : (double)averagePriceInOneMonth,
+                AveragePricePastTwoMonth = averagePriceInTwoMonth == null ? 0 : (double)averagePriceInTwoMonth,
                 AveragePricePastThreeMonth = averagePriceInThreeMonth == null ? 0 : (double)averagePriceInThreeMonth,
                 AveragePricePastSixMonth = averagePriceInSixMonth == null ? 0 : (double)averagePriceInSixMonth,
-                AveragePricePastYear = averagePriceInOneYear == null ? 0 : (double)averagePriceInOneYear
+                AveragePricePastYear = averagePriceInOneYear == null ? 0 : (double)averagePriceInOneYear,
+                Volatility = volatility,
+                CirculatedMarketValueWeightedNonSysRisk = nonSysRisk
             };
             
 
@@ -1020,6 +941,7 @@ namespace apm
             GetMarketIndex();
             GetIsFilterByBoardConfig();
             GetInterestedSymbols();
+            GetSectorReturnRate();
         }
 
         private void GetMarketType()
@@ -1055,9 +977,15 @@ namespace apm
 
         private void GetEndDate()
         {
-            bool isValid = DateTime.TryParse(ConfigurationManager.AppSettings["EndDate"], out _endDate);
-            if (!isValid)
-                throw new ApplicationException(string.Format("Configuration item 'EndDate' must be present and valid"));
+            var endDate = ConfigurationManager.AppSettings["EndDate"];
+            if(!string.IsNullOrEmpty(endDate) && DateTime.TryParse(endDate, out _endDate))
+            {
+                // Do nothing
+            }
+            else
+            {
+                _endDate = DateTime.Now.Date;
+            }
         }
 
         private void GetMarketReturn()
@@ -1108,6 +1036,28 @@ namespace apm
             }
         }
 
+        private void GetSectorReturnRate()
+        {
+            if (_startDate > _endDate)
+            {
+                throw new ApplicationException(
+                    string.Format("The time scope specified in the config file is incorrect, StartDate cannot be later than EndDate",
+                    _startDate.ToShortDateString(), _endDate.ToShortDateString()));
+            }
+
+            var rawSectorDaily =
+                _astock.STK_MKT_SectorDaily
+                .Where(a => a.TradeDate >= _startDate && a.TradeDate <= _endDate)
+                .OrderBy(a => a.TradeDate).ToList();
+
+            foreach(var s in rawSectorDaily)
+            {
+                _mktSector.Add(
+                    new Tuple<DateTime, string>((DateTime)s.TradeDate, s.SectorTypeId), 
+                    s.CirculatedMarketValueWeightedReturnRateReinvest);
+            }
+        }
+
         private void GetIndustryLevel()
         {
             _industry = ConfigurationManager.AppSettings["IndustryLevel"];
@@ -1121,6 +1071,7 @@ namespace apm
                 case "IndustryTopLevel":
                 case "Industry2ndLevel2001":
                 case "Industry2ndLevel2012":
+                case "IndustrySector":
                     break;
                 default:
                     throw new ApplicationException(string.Format("Unrecognized industry level : <{0}>", _industry));
@@ -1161,6 +1112,7 @@ namespace apm
             {
                 case "INDEX":
                 case "CONSOLIDATED":
+                case "SECTOR":
                     break;
                 default:
                     throw new ApplicationException(string.Format("Unrecognized return rate source : <{0}>", _source));

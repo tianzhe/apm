@@ -81,6 +81,9 @@
     <Compile Include="STK_MKT_RiskFactorDaily.cs">
       <DependentUpon>AStock.tt</DependentUpon>
     </Compile>
+    <Compile Include="STK_MKT_SectorDaily.cs">
+      <DependentUpon>AStock.tt</DependentUpon>
+    </Compile>
     <Compile Include="STK_MKT_ThreeFactorModelDaily.cs">
       <DependentUpon>AStock.tt</DependentUpon>
     </Compile>
@@ -100,6 +103,9 @@
       <DependentUpon>AStock.tt</DependentUpon>
     </Compile>
     <Compile Include="TRD_Co_Quarter_RiskIndex.cs">
+      <DependentUpon>AStock.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TRD_Sector.cs">
       <DependentUpon>AStock.tt</DependentUpon>
     </Compile>
   </ItemGroup>

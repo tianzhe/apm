@@ -21,6 +21,9 @@
         <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_ProfitIndex" Width="1.5" PointX="5.375" PointY="9.75" />
         <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_PSIndex" Width="1.5" PointX="10.375" PointY="0.75" />
         <EntityTypeShape EntityType="astockModel.TRD_Co_Quarter_RiskIndex" Width="1.5" PointX="12.375" PointY="0.75" />
+        <EntityTypeShape EntityType="astockModel.STK_MKT_SectorDaily" Width="1.5" PointX="12.375" PointY="4.75" />
+        <EntityTypeShape EntityType="astockModel.TRD_Sector" Width="1.5" PointX="0.75" PointY="4.75" />
+        <AssociationConnector Association="astockModel.FK_TRD_Co_TRD_Sector" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -22,6 +22,7 @@ namespace apm
         public string IndustryTopLevel { get; set; }
         public string Industry2ndLevel { get; set; }
         public string Industry3rdLevel { get; set; }
+        public string IndustrySector { get; set; }
         public string FirmFullName { get; set; }
         public string FirmShortName { get; set; }
         public string StockID { get; set; }
@@ -32,8 +33,11 @@ namespace apm
         public double Liquidity { get; set; }
         public double LatestLongTermROE { get; set; }
         public double LatestClosePrice { get; set; }
+        public double NonSystemRisk { get; set; }
+        public double Volatility { get; set; }
         public double AveragePriceInPastWeek { get; set; }
         public double AveragePriceInPastMonth { get; set; }
+        public double AveragePriceInPastTwoMonth { get; set; }
         public double AveragePriceInPastThreeMonth { get; set; }
         public double AveragePriceInPastSixMonth { get; set; }
         public double AveragePriceInPastYear { get; set; }
@@ -78,10 +82,16 @@ namespace apm
 
         public double AveragePricePastMonth { get; set; }
 
+        public double AveragePricePastTwoMonth { get; set; }
+
         public double AveragePricePastThreeMonth { get; set; }
 
         public double AveragePricePastSixMonth { get; set; }
 
         public double AveragePricePastYear { get; set; }
+
+        public double CirculatedMarketValueWeightedNonSysRisk { get; set; }
+
+        public double Volatility { get; set; }
     }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace apm
 {
-    interface Model
+    abstract class Model
     {
-        Portfolio Generate();
+        public abstract Portfolio Generate();
     }
 }
