@@ -50,7 +50,7 @@ namespace apm
         // Arithmetic averaged = sum(daily) / count
         public double ExcessiveReturn1 { get; set; }
 
-        // Weighted averaged = ((1+x) (1+y) .... - 1) / count
+        // Geometric averaged = pow(multiple(1+Xi), 1/count) - 1
         public double ExcessiveReturn2 { get; set; }
 
         // ResidentialReturn = ExcessiveReturn - Beta * MarketExcessiveReturn

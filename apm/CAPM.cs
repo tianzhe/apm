@@ -793,7 +793,7 @@ namespace apm
             
             switch(_avAlgo)
             {
-                case "Weighted":
+                case "Geometric":
 
                     excessive = excessive2;
                     premium = premium2;
@@ -1203,7 +1203,7 @@ namespace apm
 
             switch (_avAlgo)
             {
-                case "Weighted":
+                case "Geometric":
                 case "Arithmetic":
                     break;
                 default:
